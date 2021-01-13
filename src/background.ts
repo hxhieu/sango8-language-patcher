@@ -4,6 +4,8 @@ import { join } from 'path';
 import { app, protocol, BrowserWindow } from 'electron';
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib';
 import installExtension from 'electron-devtools-installer';
+import { checkCreateWorkDir } from './api';
+
 const isDevelopment = process.env.NODE_ENV !== 'production';
 
 // Scheme must be registered before the app is ready
@@ -62,6 +64,7 @@ app.on('ready', async () => {
     }
   }
   createWindow();
+  checkCreateWorkDir();
 });
 
 // Exit cleanly on request from parent process in development mode.
