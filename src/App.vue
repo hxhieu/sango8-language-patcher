@@ -3,12 +3,11 @@
   <div id="loader" v-if="showLoading">
     <div class="spinner">
       <ProgressSpinner strokeWidth="4" animationDuration="1s" />
-      <label>{{ loadingText }}</label>
+      <label v-if="loadingText">{{ loadingText }}</label>
     </div>
   </div>
-  <BlockUI :blocked="showLoading" :fullScreen="true">
-    <router-view class="content" />
-  </BlockUI>
+  <BlockUI :blocked="showLoading" :fullScreen="true"> </BlockUI>
+  <router-view class="content" />
 </template>
 
 <script lang="ts">
@@ -69,6 +68,10 @@ body {
   height: 100%;
 }
 
+.p-blockui {
+  pointer-events: none;
+}
+
 #app {
   height: 100%;
   font-family: 'Roboto', sans-serif;
@@ -83,10 +86,6 @@ body {
     .p-toast-icon-close {
       border: 0;
     }
-  }
-
-  .p-blockui-container {
-    height: 100%;
   }
 
   $spinner-gap: 40px;
