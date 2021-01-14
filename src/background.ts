@@ -4,7 +4,7 @@ import { join } from 'path';
 import { app, protocol, BrowserWindow } from 'electron';
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib';
 import installExtension from 'electron-devtools-installer';
-import { checkCreateWorkDir } from './api';
+import { handleInvocations } from './api';
 
 const isDevelopment = process.env.NODE_ENV !== 'production';
 
@@ -21,7 +21,6 @@ async function createWindow() {
       // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
       nodeIntegration: (process.env.ELECTRON_NODE_INTEGRATION as unknown) as boolean,
       preload: join(__dirname, 'preload.js'),
-      enableRemoteModule: true,
     },
   });
 
@@ -63,8 +62,9 @@ app.on('ready', async () => {
       console.error('Vue Devtools failed to install:', e.toString());
     }
   }
-  createWindow();
-  checkCreateWorkDir();
+  // This will handle all events invoked by the renderer process
+  handleInvocations();
+  await createWindow();
 });
 
 // Exit cleanly on request from parent process in development mode.

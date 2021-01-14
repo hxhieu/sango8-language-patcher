@@ -1,9 +1,13 @@
-import { existsSync, mkdirSync } from 'fs';
-import { workDir } from '.';
+import { existsSync, mkdir } from 'fs';
+import { promisify } from 'util';
 
-const checkCreateWorkDir = () => {
+import { workDir } from './const';
+
+const mkdirAsync = promisify(mkdir);
+
+const checkCreateWorkDir = async (): Promise<void> => {
   if (!existsSync(workDir)) {
-    mkdirSync(workDir);
+    await mkdirAsync(workDir);
   }
 };
 

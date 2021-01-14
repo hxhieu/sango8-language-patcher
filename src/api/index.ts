@@ -1,8 +1,16 @@
-import { homedir } from 'os';
-import { join } from 'path';
+import { ipcMain } from 'electron';
 
-const workDir = join(homedir(), 'sango8-language-patcher');
+import { EVENT_CHECK_CREATE_WORKING_DIR, EVENT_PARSE_SOURCES } from './const';
+import { checkCreateWorkDir } from './createWorkingDir';
+import { parseSources } from './parseSources';
 
-export { workDir };
+const handleInvocations = () => {
+  ipcMain.handle(EVENT_PARSE_SOURCES, async (_, args) => {
+    await parseSources(args[0]);
+  });
+  ipcMain.handle(EVENT_CHECK_CREATE_WORKING_DIR, async () => {
+    await checkCreateWorkDir();
+  });
+};
 
-export * from './createWorkingDir';
+export { handleInvocations };
