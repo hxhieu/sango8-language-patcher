@@ -23,7 +23,9 @@ declare module 'vue-svg-inline-plugin' {
   }
 
   type InstallFunction = (app: App, options?: VueSvgInlinePluginOptions) => any;
-  type VueSvgInlinePlugin = (InstallFunction & { install?: InstallFunction }) | { install: InstallFunction };
+  type VueSvgInlinePlugin =
+    | (InstallFunction & { install?: InstallFunction })
+    | { install: InstallFunction };
 
   const _default: VueSvgInlinePlugin;
 

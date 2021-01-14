@@ -15,7 +15,10 @@ const readFileAsync = promisify(readFile);
 // in the raw text file
 const START_RECORD = 4;
 
-const readSourceRaw = async (variant: string, source: string): Promise<string | undefined> => {
+const readSourceRaw = async (
+  variant: string,
+  source: string,
+): Promise<string | undefined> => {
   const partFilePath = join(sourceDir, `Strings_${source}.${variant}.txt`);
   if (existsSync(partFilePath)) {
     return await readFileAsync(partFilePath, 'utf-8');
