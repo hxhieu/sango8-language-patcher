@@ -1,15 +1,16 @@
 import { BrowserWindow } from 'electron';
 import { EVENT_LOGGER } from './const';
+import { LogMessage, LogType } from '@/interfaces/logMessage';
 
-const log = (message: string, type: 'info' | 'warn' | 'error' = 'info') => {
-  if (type === 'info' || type === 'warn') {
-    console.log(`${type.toLocaleUpperCase()}: ${message}`);
-  } else {
+const log = (message: string, type: LogType = 'info') => {
+  if (type === 'error') {
     console.error(message);
+  } else {
+    console.log(`${type.toLocaleUpperCase()}: ${message}`);
   }
   const win = BrowserWindow.getFocusedWindow();
   if (win) {
-    win.webContents.send(EVENT_LOGGER, { message, type });
+    win.webContents.send(EVENT_LOGGER, { message, type } as LogMessage);
   }
 };
 

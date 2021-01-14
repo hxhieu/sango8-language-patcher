@@ -10,6 +10,9 @@
   "dependencies": {
     "core-js": "^3.6.5",
     "graceful-fs": "^4.2.4",
+    "mitt": "^2.1.0",
+    "primeicons": "^4.1.0",
+    "primevue": "^3.1.2",
     "vue": "^3.0.5",
     "vue-router": "^4.0.3",
     "vuex": "^4.0.0-rc.2"
