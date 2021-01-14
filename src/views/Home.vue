@@ -7,7 +7,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import Button from 'primevue/button';
-import { checkAndFetchPacks } from '@/composables/checkAndFetchPacks';
+import { useInitialise } from '@/composables';
 
 export default defineComponent({
   name: 'Home',
@@ -15,6 +15,7 @@ export default defineComponent({
     Button,
   },
   setup() {
+    const { checkAndFetchPacks } = useInitialise();
     checkAndFetchPacks();
   },
 });
