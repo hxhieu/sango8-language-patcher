@@ -4,10 +4,9 @@ import { writeFile } from 'graceful-fs';
 import { promisify } from 'util';
 
 import { TranslationRecord } from '@/interfaces/translationRecord';
-import { workDir } from './const';
+import { packDir } from './const';
 import { log } from './logger';
 
-const packDir = join(workDir, 'packs');
 const writeFileAsync = promisify(writeFile);
 
 const writeTranslation = async (

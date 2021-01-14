@@ -1,25 +1,45 @@
 <template>
   <Toast position="top-right" class="toast" />
-  <router-view />
+  <div id="loader" v-if="showLoading">
+    <div class="spinner">
+      <ProgressSpinner strokeWidth="4" animationDuration="1s" />
+      <label>{{ loadingText }}</label>
+    </div>
+  </div>
+  <BlockUI :blocked="showLoading" :fullScreen="true">
+    <router-view class="content" />
+  </BlockUI>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { computed, defineComponent } from 'vue';
+import { useStore } from 'vuex';
+import { IpcRendererEvent } from 'electron';
 import { useToast } from 'primevue/usetoast';
 import Toast from 'primevue/toast';
-import { IpcRendererEvent } from 'electron';
+import BlockUI from 'primevue/blockui';
+import ProgressSpinner from 'primevue/progressspinner';
 
 import { LogMessage } from './interfaces/logMessage';
 import { EVENT_LOGGER } from './api/const';
+import { RootStore } from './store';
 
 export default defineComponent({
   name: 'App',
   components: {
     Toast,
+    BlockUI,
+    ProgressSpinner,
   },
   setup() {
     const { ipcRenderer } = window._api;
     const toast = useToast();
+    const {
+      state: { shell },
+    } = useStore<RootStore>();
+    const showLoading = computed(() => shell.blockUI);
+    const loadingText = computed(() => shell.blockText);
+
     // Global main process logger
     ipcRenderer.on(EVENT_LOGGER, (_: IpcRendererEvent, log: LogMessage) => {
       const { message: detail, type: severity } = log;
@@ -30,17 +50,70 @@ export default defineComponent({
         summary: severity.toLocaleUpperCase(),
       });
     });
+
+    return {
+      showLoading,
+      loadingText,
+    };
   },
 });
 </script>
 
 <style lang="scss">
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100;400;700&display=swap');
+
+html,
+body {
+  padding: 0;
+  margin: 0;
+  height: 100%;
+}
+
 #app {
+  height: 100%;
   font-family: 'Roboto', sans-serif;
   font-size: 16px;
-  .p-toast-icon-close {
-    border: 0;
+
+  .content {
+    height: 100%;
+  }
+
+  .p-toast {
+    z-index: 9999 !important;
+    .p-toast-icon-close {
+      border: 0;
+    }
+  }
+
+  .p-blockui-container {
+    height: 100%;
+  }
+
+  $spinner-gap: 40px;
+
+  #loader {
+    z-index: 9999;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .spinner {
+      background: #fff;
+      padding: $spinner-gap;
+      border-radius: 10px;
+      text-align: center;
+      label {
+        display: block;
+        font-weight: 700;
+        font-size: 1.5rem;
+        margin-top: $spinner-gap;
+      }
+    }
   }
 }
 </style>

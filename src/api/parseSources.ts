@@ -2,12 +2,11 @@ import { join } from 'path';
 import { existsSync, mkdirSync, readFile } from 'fs';
 import { promisify } from 'util';
 
-import { workDir } from './const';
+import { workDir, packDir } from './const';
 import { TranslationRecord } from '@/interfaces/translationRecord';
 import { writeTranslation } from './writeTranslation';
 
 const sourceDir = join(workDir, 'sources');
-const packDir = join(workDir, 'packs');
 
 const readFileAsync = promisify(readFile);
 
