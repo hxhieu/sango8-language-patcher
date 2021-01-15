@@ -1,12 +1,12 @@
 import { join } from 'path';
 import { existsSync } from 'fs';
 
-import { packDir } from './const';
+import { packExt, workDir } from './const';
 
 const checkSources = (): boolean => {
   if (
-    existsSync(join(packDir, 'zh-cn')) ||
-    existsSync(join(packDir, 'zh-tw'))
+    existsSync(join(workDir, `zh-cn.${packExt}`)) ||
+    existsSync(join(workDir, `zh-tw.${packExt}`))
   ) {
     return true;
   }

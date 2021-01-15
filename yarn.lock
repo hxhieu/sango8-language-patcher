@@ -6207,6 +6207,13 @@ lru-cache@^6.0.0:
   dependencies:
     yallist "^4.0.0"
 
+lzutf8@^0.5.7:
+  version "0.5.7"
+  resolved "https://registry.yarnpkg.com/lzutf8/-/lzutf8-0.5.7.tgz#3e0852a7933e461f732eb9184fcb1d5a774768df"
+  integrity sha512-jTkLLrZCTMntBfePKUNxjPqNaCO2PLr4fq0mwADpYa911qIL5+thS6OY6kqdH5F0Fn24s/d5sJCr7SBEd7+pRQ==
+  dependencies:
+    readable-stream "^3.6.0"
+
 magic-string@^0.25.7:
   version "0.25.7"
   resolved "https://registry.yarnpkg.com/magic-string/-/magic-string-0.25.7.tgz#3f497d6fd34c669c6798dcb821f2ef31f5445051"
@@ -6663,11 +6670,6 @@ node-releases@^1.1.69:
   version "1.1.69"
   resolved "https://registry.yarnpkg.com/node-releases/-/node-releases-1.1.69.tgz#3149dbde53b781610cd8b486d62d86e26c3725f6"
   integrity sha512-DGIjo79VDEyAnRlfSqYTsy+yoHd2IOjJiKUozD2MV2D85Vso6Bug56mb9tT/fY5Urt0iqk01H7x+llAruDR2zA==
-
-node-stream-zip@^1.12.0:
-  version "1.12.0"
-  resolved "https://registry.yarnpkg.com/node-stream-zip/-/node-stream-zip-1.12.0.tgz#f69af78799531b928662f4900d345387fa0b3777"
-  integrity sha512-HZ3XehqShTFj9gHauRJ3Bri9eiCTOII7/crtXzURtT14NdnOFs9Ia5E82W7z3izVBNx760tqwddxrBJVG52Y1Q==
 
 normalize-package-data@^2.5.0:
   version "2.5.0"

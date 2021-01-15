@@ -1,10 +1,10 @@
-import { join } from 'path';
-import { promises as fs } from 'fs';
 import { TranslationRecord } from '@/interfaces/translationRecord';
-import { packDir } from './const';
+import { PackArchive } from '@/interfaces/packArchive';
+import { readArchive } from './archiveUtils';
+import { loadLocalPack } from './localPackUtils';
 
 // TODO: lru-cache
-let cache: any = {};
+let cache: { [key: string]: PackArchive } = {};
 
 const fetchRecords = async (
   locale: string,
@@ -12,29 +12,22 @@ const fetchRecords = async (
   filter?: string,
   pageIndex: number = 0,
   pageSize: number = 100,
-  recache: boolean = false,
+  invalidateCache: boolean = false,
 ): Promise<TranslationRecord[]> => {
   let result: TranslationRecord[] = [];
-  if (
-    recache ||
-    !cache[locale] ||
-    !cache[locale][source] ||
-    cache[locale][source].length <= 0
-  ) {
-    cache[locale] = {
-      [source]: [],
-    };
-    const dir = join(packDir, locale, source);
-    const stats = await fs.stat(dir);
-    if (stats && stats.isDirectory()) {
-      const all = await fs.readdir(dir);
-      for (const file of all) {
-        // TODO: Promise.all?
-        const record: TranslationRecord = JSON.parse(
-          await fs.readFile(join(dir, file), 'utf8'),
+  // Load the data
+  if (invalidateCache || !cache[locale]) {
+    // Source packs
+    if (locale === 'zh-tw' || locale === 'zh-cn') {
+      const sourcePack = await readArchive(locale);
+      if (!sourcePack) {
+        throw new Error(
+          'Source packs are missing, please re-download them from the menu',
         );
-        cache[locale][source].push(record);
       }
+      cache[locale] = sourcePack;
+    } else {
+      cache[locale] = await loadLocalPack(locale);
     }
   }
 

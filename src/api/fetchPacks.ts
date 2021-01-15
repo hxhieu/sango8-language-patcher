@@ -1,15 +1,22 @@
 import { checkCreatePackDir } from './dirUtils';
-import { EVENT_DOWNLOAD_PROGRESS, packZip, packDownloadUrl } from './const';
+import {
+  EVENT_DOWNLOAD_PROGRESS,
+  packDownloadUrl,
+  packExt,
+  workDir,
+} from './const';
 import { createWriteStream } from 'fs';
+import { join } from 'path';
 import axios from 'axios';
 import { WebContents } from 'electron';
 
-const fetchPacks = async (sender: WebContents) =>
+const fetchPacks = async (sender: WebContents, locale: string) =>
   new Promise<void>((resolve, reject) => {
+    const packFileName = `${locale}.${packExt}`;
     checkCreatePackDir()
       .then(() => {
         axios
-          .get(packDownloadUrl, {
+          .get(`${packDownloadUrl}/${packFileName}`, {
             responseType: 'stream',
           })
           .then(response => {
@@ -22,7 +29,7 @@ const fetchPacks = async (sender: WebContents) =>
               sender.send(EVENT_DOWNLOAD_PROGRESS, [current, total]);
             });
 
-            const file = createWriteStream(packZip);
+            const file = createWriteStream(join(workDir, `${packFileName}`));
 
             file.on('error', err => {
               file.close();

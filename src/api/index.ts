@@ -12,7 +12,6 @@ import { parseSources } from './parseSources';
 import { log } from './logger';
 import { checkSources } from './checkSources';
 import { fetchPacks } from './fetchPacks';
-import { extractPacks } from './extractPacks';
 import { fetchRecords } from './fetchRecords';
 
 const handleInvocations = () => {
@@ -41,16 +40,18 @@ const handleInvocations = () => {
     }
   });
 
-  ipcMain.handle(EVENT_FETCH_PACKS, async (e: IpcMainInvokeEvent) => {
-    try {
-      await fetchPacks(e.sender);
-      await extractPacks(e.sender);
-      e.sender.send(EVENT_FETCH_PACKS, [true]);
-    } catch (e) {
-      log(e.message, 'error');
-      e.sender.send(EVENT_FETCH_PACKS, [false]);
-    }
-  });
+  ipcMain.handle(
+    EVENT_FETCH_PACKS,
+    async (e: IpcMainInvokeEvent, args: any[]) => {
+      try {
+        await fetchPacks(e.sender, args[0]);
+        e.sender.send(EVENT_FETCH_PACKS, [true]);
+      } catch (e) {
+        log(e.message, 'error');
+        e.sender.send(EVENT_FETCH_PACKS, [false]);
+      }
+    },
+  );
 
   ipcMain.handle(
     EVENT_FETCH_RECORDS,

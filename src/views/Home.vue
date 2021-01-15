@@ -16,13 +16,13 @@ export default defineComponent({
     Button,
   },
   setup() {
-    const { checkAndFetchPacks } = useInitialise();
+    const { checkAndFetchSources } = useInitialise();
     const { ipcRenderer } = window._api;
     const test = () => {
       ipcRenderer.invoke(EVENT_FETCH_RECORDS, ['zh-tw', 'full', null, 2000, 4]);
     };
 
-    checkAndFetchPacks();
+    checkAndFetchSources();
 
     return {
       test,

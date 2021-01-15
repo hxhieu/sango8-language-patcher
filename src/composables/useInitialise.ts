@@ -8,7 +8,7 @@ import { IpcRendererEvent } from 'electron/main';
 import prettyBytes from 'pretty-bytes';
 import { useBlockUi } from '@/composables';
 
-const checkAndFetchPacks = () => {
+const checkAndFetchSources = () => {
   const { block, unblock } = useBlockUi();
   const { ipcRenderer } = window._api;
 
@@ -44,7 +44,7 @@ const checkAndFetchPacks = () => {
       });
 
       // Start the fetching default packs
-      ipcRenderer.invoke(EVENT_FETCH_PACKS);
+      ipcRenderer.invoke(EVENT_FETCH_PACKS, ['zh-tw']);
     } else {
       unblock();
     }
@@ -55,7 +55,7 @@ const checkAndFetchPacks = () => {
 };
 
 const useInitialise = () => ({
-  checkAndFetchPacks,
+  checkAndFetchSources,
 });
 
 export { useInitialise };
