@@ -2,8 +2,9 @@ import { join } from 'path';
 import { packDir } from './const';
 import { existsSync, readFile, readdir } from 'graceful-fs';
 import { promisify } from 'util';
-import { PackArchive } from '@/interfaces/packArchive';
+import { PackArchive } from '@/interfaces';
 
+// TODO: Make helper for these
 const readFileAsync = promisify(readFile);
 const readDirAsync = promisify(readdir);
 

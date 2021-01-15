@@ -19,7 +19,7 @@ import Toast from 'primevue/toast';
 import BlockUI from 'primevue/blockui';
 import ProgressSpinner from 'primevue/progressspinner';
 
-import { LogMessage } from './interfaces/logMessage';
+import { LogMessage } from '@/interfaces';
 import { EVENT_LOGGER } from './api/const';
 import { RootStore } from './store';
 

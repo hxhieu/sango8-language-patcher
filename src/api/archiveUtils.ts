@@ -3,9 +3,10 @@ import { workDir, packExt } from './const';
 import { existsSync, readFile, writeFile } from 'graceful-fs';
 import { promisify } from 'util';
 import lz from 'lzutf8';
-import { PackArchive } from '@/interfaces/packArchive';
+import { PackArchive } from '@/interfaces';
 import { loadLocalPack } from './localPackUtils';
 
+// TODO: Make helper for these
 const readFileAsync = promisify(readFile);
 const writeFileAsync = promisify(writeFile);
 

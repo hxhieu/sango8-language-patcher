@@ -1,6 +1,6 @@
 import { BrowserWindow } from 'electron';
 import { EVENT_LOGGER } from './const';
-import { LogMessage, LogType } from '@/interfaces/logMessage';
+import { LogMessage, LogType } from '@/interfaces';
 
 const log = (message: string, type: LogType = 'info') => {
   if (type === 'error') {

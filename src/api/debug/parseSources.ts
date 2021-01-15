@@ -2,12 +2,13 @@ import { join } from 'path';
 import { existsSync, mkdirSync, readFile } from 'fs';
 import { promisify } from 'util';
 
-import { workDir, packDir } from './const';
-import { TranslationRecord } from '@/interfaces/translationRecord';
-import { writeTranslation } from './writeTranslation';
+import { workDir, packDir } from '../const';
+import { TranslationRecord } from '@/interfaces';
+import { writeTranslation } from '../writeTranslation';
 
 const sourceDir = join(workDir, 'sources');
 
+// TODO: Make helper for these
 const readFileAsync = promisify(readFile);
 
 // It starts from the 4th record

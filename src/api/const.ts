@@ -10,7 +10,9 @@ const packDownloadUrl =
 
 const packExt = 'lz';
 
-const EVENT_PARSE_SOURCES = 'EVENT_PARSE_SOURCES';
+// Read the raw file into folders
+const DEBUG_PARSE_SOURCES = 'DEBUG_PARSE_SOURCES';
+
 const EVENT_CHECK_CREATE_WORKING_DIR = 'EVENT_CHECK_CREATE_WORKING_DIR';
 const EVENT_LOGGER = 'EVENT_LOGGER';
 const EVENT_CHECK_SOURCES = 'EVENT_CHECK_SOURCES';
@@ -24,7 +26,7 @@ export {
   packDir,
   packDownloadUrl,
   packExt,
-  EVENT_PARSE_SOURCES,
+  DEBUG_PARSE_SOURCES,
   EVENT_CHECK_CREATE_WORKING_DIR,
   EVENT_LOGGER,
   EVENT_CHECK_SOURCES,

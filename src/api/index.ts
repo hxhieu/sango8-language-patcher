@@ -5,28 +5,31 @@ import {
   EVENT_CHECK_SOURCES,
   EVENT_FETCH_PACKS,
   EVENT_FETCH_RECORDS,
-  EVENT_PARSE_SOURCES,
+  DEBUG_PARSE_SOURCES,
 } from './const';
 import { checkCreateWorkDir } from './dirUtils';
-import { parseSources } from './parseSources';
+import { parseSources } from './debug/parseSources';
 import { log } from './logger';
 import { checkSources } from './checkSources';
 import { fetchPacks } from './fetchPacks';
 import { fetchRecords } from './fetchRecords';
 
 const handleInvocations = () => {
+  // Debug events
+  if (process.env.NODE_ENV !== 'production') {
+    ipcMain.handle(DEBUG_PARSE_SOURCES, async (_, args) => {
+      try {
+        await parseSources(args[0]);
+      } catch (e) {
+        log(e.message, 'error');
+      }
+    });
+  }
+
   ipcMain.handle(EVENT_CHECK_SOURCES, (e: IpcMainInvokeEvent) => {
     try {
       const valid = checkSources();
       e.sender.send(EVENT_CHECK_SOURCES, [valid]);
-    } catch (e) {
-      log(e.message, 'error');
-    }
-  });
-
-  ipcMain.handle(EVENT_PARSE_SOURCES, async (_, args) => {
-    try {
-      await parseSources(args[0]);
     } catch (e) {
       log(e.message, 'error');
     }
@@ -57,13 +60,14 @@ const handleInvocations = () => {
     EVENT_FETCH_RECORDS,
     async (e: IpcMainInvokeEvent, args: any[]) => {
       try {
-        await fetchRecords(
+        const records = await fetchRecords(
           args[0],
           args[1],
           args[2],
-          parseInt(args[3], 10),
-          parseInt(args[4], 10),
+          args[3] && parseInt(args[3], 10),
+          args[4] && parseInt(args[4], 10),
         );
+        e.sender.send(EVENT_FETCH_RECORDS, [records]);
       } catch (e) {
         log(e.message, 'error');
       }

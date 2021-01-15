@@ -1,14 +1,20 @@
 <template>
   <div class="home">
     <Button @click="test">AAA</Button>
+    <ul>
+      <li v-for="record in records" :key="record.id">
+        {{ record.text }}
+      </li>
+    </ul>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { computed, defineComponent } from 'vue';
+import { useStore } from 'vuex';
 import Button from 'primevue/button';
-import { useInitialise } from '@/composables';
-import { EVENT_FETCH_RECORDS } from '@/api/const';
+import { useInitialise, useTranslations } from '@/composables';
+import { RootStore } from '@/store';
 
 export default defineComponent({
   name: 'Home',
@@ -17,15 +23,16 @@ export default defineComponent({
   },
   setup() {
     const { checkAndFetchSources } = useInitialise();
-    const { ipcRenderer } = window._api;
+    const { fetchRecords } = useTranslations();
+    const { state } = useStore<RootStore>();
+    const records = computed(() => state.translations.records);
     const test = () => {
-      ipcRenderer.invoke(EVENT_FETCH_RECORDS, ['zh-tw', 'full', null, 2000, 4]);
+      fetchRecords('zh-tw', 'full');
     };
-
     checkAndFetchSources();
-
     return {
       test,
+      records,
     };
   },
 });

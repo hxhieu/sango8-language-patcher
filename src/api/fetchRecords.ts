@@ -1,9 +1,8 @@
-import { TranslationRecord } from '@/interfaces/translationRecord';
-import { PackArchive } from '@/interfaces/packArchive';
+import { TranslationRecord, PackArchive } from '@/interfaces';
 import { readArchive } from './archiveUtils';
 import { loadLocalPack } from './localPackUtils';
 
-// TODO: lru-cache
+// TODO: separate cache module, lru-cache?
 let cache: { [key: string]: PackArchive } = {};
 
 const fetchRecords = async (
@@ -47,9 +46,6 @@ const fetchRecords = async (
   result = result.sort((a, b) => (a.id > b.id ? 1 : -1));
   // paging
   result = result.splice(pageIndex, pageSize);
-
-  console.log(result.map(x => x.id));
-
   return result;
 };
 

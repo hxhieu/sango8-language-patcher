@@ -3,10 +3,11 @@ import { existsSync, mkdirSync } from 'fs';
 import { writeFile } from 'graceful-fs';
 import { promisify } from 'util';
 
-import { TranslationRecord } from '@/interfaces/translationRecord';
+import { TranslationRecord } from '@/interfaces';
 import { packDir } from './const';
 import { log } from './logger';
 
+// TODO: Make helper for these
 const writeFileAsync = promisify(writeFile);
 
 const writeTranslation = async (

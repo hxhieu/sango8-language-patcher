@@ -3,6 +3,7 @@ import { promisify } from 'util';
 
 import { workDir, packDir } from './const';
 
+// TODO: Make helper for these
 const mkdirAsync = promisify(mkdir);
 
 const checkCreateWorkDir = async (): Promise<void> => {
