@@ -16,3 +16,9 @@ export interface PackArchive {
   version: any;
   [key: string]: TranslationRecord[];
 }
+
+export interface PackListModel {
+  local?: string;
+  source?: string;
+  fileType?: string;
+}

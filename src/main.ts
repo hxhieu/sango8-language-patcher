@@ -1,16 +1,14 @@
 import { createApp } from 'vue';
-import ToastService from 'primevue/toastservice';
 
 import App from './App.vue';
 import router from './router';
 import store from './store';
+import bootstrapPrimeVue from './primevue';
 
-import 'primevue/resources/themes/arya-orange/theme.css';
-// import 'primevue/resources/themes/nova/theme.css';
-import 'primeicons/primeicons.css';
-
-createApp(App)
-  .use(ToastService)
+const app = createApp(App)
   .use(store)
-  .use(router)
-  .mount('#app');
+  .use(router);
+
+bootstrapPrimeVue(app);
+
+app.mount('#app');

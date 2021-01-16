@@ -67,6 +67,7 @@ body {
   margin: 0;
   height: 100%;
   background: var(--surface-a);
+  min-width: 800px;
 }
 
 .p-blockui {
@@ -77,6 +78,10 @@ body {
 // and it always show on Electron?
 .p-hidden-accessible {
   display: none;
+}
+
+.p-button {
+  cursor: pointer;
 }
 
 #app {

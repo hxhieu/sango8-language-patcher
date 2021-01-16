@@ -5,9 +5,16 @@
         <label>Local pack</label>
         <Dropdown
           :options="localPacks"
-          @change="localChanged"
-          v-model="selectedLocal"
+          @change="change"
+          v-model="model.local"
           placeholder="Select a local pack"
+        />
+        <Dropdown
+          v-if="!!model.local"
+          :options="fileTypes"
+          @change="change"
+          v-model="model.fileType"
+          placeholder="Select a file type"
         />
         <Button>New pack</Button>
       </div>
@@ -15,8 +22,8 @@
         <label>Source pack</label>
         <Dropdown
           :options="sourcePacks"
-          @change="sourceChanged"
-          v-model="selectedSource"
+          @change="change"
+          v-model="model.source"
         />
       </div>
     </div>
@@ -25,17 +32,10 @@
 
 <script lang="ts">
 import { computed, defineComponent, ref } from 'vue';
-import Panel from 'primevue/panel';
-import Dropdown from 'primevue/dropdown';
-import Button from 'primevue/button';
+import { PackListModel } from '@/interfaces';
 
 export default defineComponent({
   name: 'PackList',
-  components: {
-    Panel,
-    Dropdown,
-    Button,
-  },
   props: {
     sources: {
       type: Array,
@@ -43,28 +43,35 @@ export default defineComponent({
     locals: {
       type: Array,
     },
+    files: {
+      type: Array,
+    },
+    value: {
+      type: Object,
+    },
   },
+  emits: ['update:value'],
   setup(props, { emit }) {
     const sourcePacks = computed(() => props.sources || []);
     const localPacks = computed(() => props.locals || []);
-    const selectedSource = ref('zh-tw');
-    const selectedLocal = ref();
+    const fileTypes = computed(() => props.files || []);
+    const { source, local, fileType } = (props.value || {}) as PackListModel;
+    const model = ref<PackListModel>({
+      source: source || 'zh-tw',
+      local,
+      fileType: fileType || 'full',
+    });
 
-    const sourceChanged = (val: string) => {
-      emit('sourceChanged', val);
-    };
-
-    const localChanged = (val: string) => {
-      emit('localChanged', val);
+    const change = () => {
+      emit('update:value', model.value);
     };
 
     return {
       sourcePacks,
       localPacks,
-      sourceChanged,
-      localChanged,
-      selectedSource,
-      selectedLocal,
+      fileTypes,
+      model,
+      change,
     };
   },
 });
@@ -79,6 +86,11 @@ export default defineComponent({
 
   > * {
     margin-right: 10px;
+  }
+
+  .p-selectbutton {
+    display: flex;
+    cursor: pointer;
   }
 }
 </style>

@@ -7,11 +7,14 @@ import { IpcRendererEvent } from 'electron';
 export interface HomeStore {
   localPacks: string[];
   sourcePacks: string[];
+  fileTypes: string[];
 }
 
 const state: HomeStore = {
   localPacks: [],
   sourcePacks: [],
+  // TODO: From backend
+  fileTypes: ['full', 'part'],
 };
 
 const mutations: MutationTree<HomeStore> = {
