@@ -5,12 +5,21 @@ import {
   EVENT_UNZIP_PROGRESS,
 } from '@/api/const';
 import { IpcRendererEvent } from 'electron/main';
+import { useStore } from 'vuex';
 import prettyBytes from 'pretty-bytes';
 import { useBlockUi } from '@/composables';
+import { HOME_SOURCE_PACKS } from '@/store/types';
 
 const checkAndFetchSources = () => {
   const { block, unblock } = useBlockUi();
+  const { commit } = useStore();
   const { ipcRenderer } = window._api;
+  const firstSourcePack = 'zh-tw';
+
+  const done = () => {
+    unblock();
+    commit(`home/${HOME_SOURCE_PACKS}`, [firstSourcePack]);
+  };
 
   // Block the UI
   block('Initialising');
@@ -40,13 +49,13 @@ const checkAndFetchSources = () => {
 
       // Download done
       ipcRenderer.on(EVENT_FETCH_PACKS, () => {
-        unblock();
+        done();
       });
 
       // Start the fetching default packs
-      ipcRenderer.invoke(EVENT_FETCH_PACKS, ['zh-tw']);
+      ipcRenderer.invoke(EVENT_FETCH_PACKS, [firstSourcePack]);
     } else {
-      unblock();
+      done();
     }
   });
 

@@ -6,6 +6,7 @@ import router from './router';
 import store from './store';
 
 import 'primevue/resources/themes/arya-orange/theme.css';
+// import 'primevue/resources/themes/nova/theme.css';
 import 'primeicons/primeicons.css';
 
 createApp(App)

@@ -3,6 +3,7 @@ import { packDir } from './const';
 import { existsSync, readFile, readdir } from 'graceful-fs';
 import { promisify } from 'util';
 import { PackArchive } from '@/interfaces';
+import { readdirAsync } from './nodeApi';
 
 // TODO: Make helper for these
 const readFileAsync = promisify(readFile);
@@ -40,4 +41,8 @@ const loadLocalPack = async (
   return archive;
 };
 
-export { loadLocalPack };
+const listPacks = async () => {
+  return await readdirAsync(join(packDir));
+};
+
+export { loadLocalPack, listPacks };

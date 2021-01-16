@@ -66,10 +66,17 @@ body {
   padding: 0;
   margin: 0;
   height: 100%;
+  background: var(--surface-a);
 }
 
 .p-blockui {
   pointer-events: none;
+}
+
+// Not sure what's this but PrimeVue has it
+// and it always show on Electron?
+.p-hidden-accessible {
+  display: none;
 }
 
 #app {

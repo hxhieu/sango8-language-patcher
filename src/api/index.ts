@@ -6,6 +6,7 @@ import {
   EVENT_FETCH_PACKS,
   EVENT_FETCH_RECORDS,
   DEBUG_PARSE_SOURCES,
+  EVENT_LIST_LOCAL_PACKS,
 } from './const';
 import { checkCreateWorkDir } from './dirUtils';
 import { parseSources } from './debug/parseSources';
@@ -13,6 +14,7 @@ import { log } from './logger';
 import { checkSources } from './checkSources';
 import { fetchPacks } from './fetchPacks';
 import { fetchRecords } from './fetchRecords';
+import { listPacks } from './localPackUtils';
 
 const handleInvocations = () => {
   // Debug events
@@ -73,6 +75,15 @@ const handleInvocations = () => {
       }
     },
   );
+
+  ipcMain.handle(EVENT_LIST_LOCAL_PACKS, async (e: IpcMainInvokeEvent) => {
+    try {
+      const packs = await listPacks();
+      e.sender.send(EVENT_LIST_LOCAL_PACKS, [packs]);
+    } catch (e) {
+      log(e.message, 'error');
+    }
+  });
 };
 
 export { handleInvocations };
