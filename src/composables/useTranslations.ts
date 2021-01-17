@@ -1,15 +1,8 @@
 import { FetchRecordArgs, TranslationRecord } from '@/interfaces';
 import { Dispatch, useStore } from 'vuex';
 
-const fetchRecords = (
-  dispatch: Dispatch,
-  args: FetchRecordArgs,
-  fetchSource: boolean,
-) => {
-  dispatch('translations/fetchRecords', {
-    args,
-    fetchSource,
-  });
+const fetchRecords = (dispatch: Dispatch, args: FetchRecordArgs) => {
+  dispatch('translations/fetchRecords', args);
 };
 
 const saveRecords = (
@@ -28,8 +21,7 @@ const saveRecords = (
 const useTranslations = () => {
   const { dispatch } = useStore();
   return {
-    fetchRecords: (args: FetchRecordArgs, fetchSource = false) =>
-      fetchRecords(dispatch, args, fetchSource),
+    fetchRecords: (args: FetchRecordArgs) => fetchRecords(dispatch, args),
     saveRecords: (
       ids: number[],
       detail: TranslationRecord,

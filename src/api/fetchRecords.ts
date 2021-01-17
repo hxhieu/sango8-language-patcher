@@ -7,31 +7,40 @@ import { compare } from './stringUtils';
 let cache: { [key: string]: PackArchive } = {};
 
 const fetchRecords = async (
-  locale: string,
   args: FetchRecordArgs,
   invalidateCache: boolean = false,
 ): Promise<[TranslationRecord[], number]> => {
+  const { local, source, search, fileType, pageIndex, pageSize, exact } = args;
+  // Defaults
+  const sourceLocale = source || 'zh-tw';
+  const localLocale = local || '';
+  const fileTypeValue = fileType || 'full';
+
   let result: TranslationRecord[] = [];
-  // Load the data
-  if (invalidateCache || !cache[locale]) {
-    // Source packs
-    if (locale === 'zh-tw' || locale === 'zh-cn') {
-      const sourcePack = await readArchive(locale);
-      if (!sourcePack) {
-        throw new Error(
-          'Source packs are missing, please re-download them from the menu',
-        );
-      }
-      cache[locale] = sourcePack;
-    } else {
-      cache[locale] = await loadLocalPack(locale);
+
+  // Reload the data if the cache is invalid
+  if (invalidateCache || !cache[localLocale] || !cache[sourceLocale]) {
+    const sourcePack = await readArchive(sourceLocale);
+    if (!sourcePack) {
+      throw new Error(
+        'Source packs are missing, please re-download them from the menu',
+      );
     }
+    cache[sourceLocale] = sourcePack;
+    cache[localLocale] = await loadLocalPack(localLocale);
   }
 
-  const { search, fileType, pageIndex, pageSize, exact } = args;
+  // Combine sources with translations
+  const combined: TranslationRecord[] = [];
+  for (const source of cache[sourceLocale][fileTypeValue]) {
+    const translated = cache[localLocale][fileTypeValue].find(
+      x => x.id === source.id,
+    );
+    combined.push(translated || source);
+  }
 
   // filter
-  for (var record of cache[locale][fileType || 'full']) {
+  for (var record of combined) {
     if (search) {
       if (
         (record.text && compare(record.text, search, exact)) ||

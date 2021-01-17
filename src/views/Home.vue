@@ -68,15 +68,7 @@ export default defineComponent({
       ...filterModel.value,
     }));
 
-    const records = computed(() => {
-      const result: TranslationRecord[] = [];
-      for (const source of translations.sources) {
-        console.log(translations.records);
-        const translated = translations.records.find(x => x.id === source.id);
-        result.push(translated || source);
-      }
-      return result;
-    });
+    const records = computed(() => translations.records);
     const localPacks = computed(() => home.localPacks);
     const sourcePacks = computed(() => home.sourcePacks);
     const fileTypes = computed(() => home.fileTypes);
@@ -97,14 +89,11 @@ export default defineComponent({
     checkAndFetchSources();
     fetchLocalPacks();
 
+    // Refetch the records when filters changed
     watch(
       fetchArgs,
       value => {
-        // Refetch local records
         fetchRecords(value);
-
-        // Refetch source records
-        fetchRecords(fetchArgs.value, true);
       },
       { deep: true },
     );
