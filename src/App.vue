@@ -6,12 +6,13 @@
       <label v-if="loadingText">{{ loadingText }}</label>
     </div>
   </div>
-  <BlockUI :blocked="showLoading" :fullScreen="true"> </BlockUI>
+  <BlockUI :blocked="showLoading" :fullScreen="true" />
   <router-view class="content" />
+  <Footer @themeChanged="themeChanged" />
 </template>
 
 <script lang="ts">
-import { computed, defineComponent } from 'vue';
+import { computed, defineComponent, watch } from 'vue';
 import { useStore } from 'vuex';
 import { IpcRendererEvent } from 'electron';
 import { useToast } from 'primevue/usetoast';
@@ -23,12 +24,17 @@ import { LogMessage } from '@/interfaces';
 import { EVENT_LOGGER } from './api/const';
 import { RootStore } from './store';
 
+import Footer from './components/Footer.vue';
+import { Theme } from './store/modules/shell';
+import { useShell } from './composables';
+
 export default defineComponent({
   name: 'App',
   components: {
     Toast,
     BlockUI,
     ProgressSpinner,
+    Footer,
   },
   setup() {
     const { ipcRenderer } = window._api;
@@ -36,8 +42,12 @@ export default defineComponent({
     const {
       state: { shell },
     } = useStore<RootStore>();
+
+    const { setTheme } = useShell();
+
     const showLoading = computed(() => shell.blockUI);
     const loadingText = computed(() => shell.blockText);
+    const theme = computed(() => shell.theme);
 
     // Global main process logger
     ipcRenderer.on(EVENT_LOGGER, (_: IpcRendererEvent, log: LogMessage) => {
@@ -50,9 +60,28 @@ export default defineComponent({
       });
     });
 
+    // Theme switching
+    watch(
+      theme,
+      value => {
+        // TODO: Not working if swap back to 'dark'
+        if (value === 'dark') {
+          require('primevue/resources/themes/arya-blue/theme.css');
+        } else if (value === 'light') {
+          require('primevue/resources/themes/fluent-light/theme.css');
+        }
+      },
+      { immediate: true },
+    );
+
+    const themeChanged = (theme: Theme) => {
+      setTheme(theme);
+    };
+
     return {
       showLoading,
       loadingText,
+      themeChanged,
     };
   },
 });
@@ -78,6 +107,7 @@ body {
   height: 100%;
   background: var(--surface-a);
   min-width: 800px;
+  overflow: hidden;
 }
 
 .p-blockui {

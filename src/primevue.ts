@@ -1,7 +1,11 @@
 import { App } from 'vue';
 
-import 'primevue/resources/themes/arya-orange/theme.css';
+// import 'primevue/resources/themes/arya-orange/theme.css';
+// import 'primevue/resources/themes/arya-blue/theme.css';
+// import 'primevue/resources/themes/fluent-light/theme.css';
 // import 'primevue/resources/themes/nova/theme.css';
+// import 'primevue/resources/themes/luna-amber/theme.css';
+
 import 'primeicons/primeicons.css';
 
 import ToastService from 'primevue/toastservice';

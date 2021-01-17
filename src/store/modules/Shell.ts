@@ -1,14 +1,18 @@
 import { ActionTree, GetterTree, MutationTree } from 'vuex';
-import { SHELL_BLOCK_UI } from '../types';
+import { SHELL_BLOCK_UI, SHELL_SET_THEME } from '../types';
 import { RootStore } from '../';
+
+export type Theme = 'dark' | 'light';
 
 export interface ShellStore {
   blockUI: boolean;
   blockText?: string;
+  theme: Theme;
 }
 
 const state: ShellStore = {
   blockUI: false,
+  theme: 'dark',
 };
 
 const mutations: MutationTree<ShellStore> = {
@@ -18,6 +22,9 @@ const mutations: MutationTree<ShellStore> = {
   ) => {
     state.blockUI = blocked || false;
     state.blockText = text;
+  },
+  [SHELL_SET_THEME]: (state, theme: Theme) => {
+    state.theme = theme;
   },
 };
 
