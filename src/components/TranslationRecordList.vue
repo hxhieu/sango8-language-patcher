@@ -86,7 +86,8 @@ export default defineComponent({
       type: Number,
     },
   },
-  setup(props) {
+  emits: ['save'],
+  setup(props, { emit }) {
     const model = computed<TranslationRecord>(
       () => (props.records as unknown) as TranslationRecord,
     );
@@ -105,8 +106,10 @@ export default defineComponent({
     };
 
     const saveRecords = (detail: TranslationRecord) => {
-      console.log(detail);
-      console.log(recordsToEdit.value.length);
+      emit('save', {
+        ids: recordsToEdit.value.map(x => x.id),
+        detail,
+      });
       recordsToEdit.value = [];
     };
 

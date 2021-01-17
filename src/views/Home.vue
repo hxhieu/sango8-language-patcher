@@ -16,6 +16,7 @@
       v-if="packListModel.local"
       :records="records"
       :totalRecords="totalRecords"
+      @save="save"
     />
   </div>
 </template>
@@ -34,6 +35,7 @@ import {
   FetchRecordArgs,
   PackListModel,
   RecordFilterModel,
+  TranslationRecord,
 } from '@/interfaces';
 
 export default defineComponent({
@@ -45,9 +47,11 @@ export default defineComponent({
   },
   setup() {
     const { checkAndFetchSources } = useInitialise();
-    const { fetchRecords } = useTranslations();
+    const { fetchRecords, saveRecords } = useTranslations();
     const { fetchLocalPacks } = useHome();
-    const { state } = useStore<RootStore>();
+    const {
+      state: { translations, home },
+    } = useStore<RootStore>();
 
     const packListModel = ref<PackListModel>({
       source: 'zh-tw',
@@ -59,29 +63,48 @@ export default defineComponent({
       exact: false,
     });
 
-    const records = computed(() => state.translations.records);
-    const localPacks = computed(() => state.home.localPacks);
-    const sourcePacks = computed(() => state.home.sourcePacks);
-    const fileTypes = computed(() => state.home.fileTypes);
+    const fetchArgs = computed<FetchRecordArgs>(() => ({
+      ...packListModel.value,
+      ...filterModel.value,
+    }));
 
-    const filterPageSizes = computed(() => state.home.filterPageSizes);
-    const totalRecords = computed(() => state.translations.total);
+    const records = computed(() => {
+      const result: TranslationRecord[] = [];
+      for (const source of translations.sources) {
+        console.log(translations.records);
+        const translated = translations.records.find(x => x.id === source.id);
+        result.push(translated || source);
+      }
+      return result;
+    });
+    const localPacks = computed(() => home.localPacks);
+    const sourcePacks = computed(() => home.sourcePacks);
+    const fileTypes = computed(() => home.fileTypes);
+
+    const filterPageSizes = computed(() => home.filterPageSizes);
+    const totalRecords = computed(() => translations.total);
+
+    const save = ({
+      ids,
+      detail,
+    }: {
+      ids: number[];
+      detail: TranslationRecord;
+    }) => {
+      saveRecords(ids, detail, fetchArgs.value);
+    };
 
     checkAndFetchSources();
     fetchLocalPacks();
 
     watch(
-      [packListModel, filterModel],
-      ([list, filter]) => {
-        const args = {
-          ...list,
-          ...filter,
-        } as FetchRecordArgs;
+      fetchArgs,
+      value => {
         // Refetch local records
-        fetchRecords(args, args.local);
+        fetchRecords(value);
 
         // Refetch source records
-        fetchRecords(args, args.source);
+        fetchRecords(fetchArgs.value, true);
       },
       { deep: true },
     );
@@ -95,6 +118,7 @@ export default defineComponent({
       filterPageSizes,
       filterModel,
       totalRecords,
+      save,
     };
   },
 });

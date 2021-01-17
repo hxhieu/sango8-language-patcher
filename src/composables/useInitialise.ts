@@ -24,7 +24,7 @@ const checkAndFetchSources = () => {
   // Block the UI
   block('Initialising');
 
-  ipcRenderer.on(EVENT_CHECK_SOURCES, (_: IpcRendererEvent, args: any[]) => {
+  ipcRenderer.once(EVENT_CHECK_SOURCES, (_: IpcRendererEvent, args: any[]) => {
     // Not found
     if (!args[0]) {
       // Download progress
@@ -48,7 +48,7 @@ const checkAndFetchSources = () => {
       );
 
       // Download done
-      ipcRenderer.on(EVENT_FETCH_PACKS, () => {
+      ipcRenderer.once(EVENT_FETCH_PACKS, () => {
         done();
       });
 

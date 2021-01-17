@@ -31,7 +31,7 @@ const mutations: MutationTree<HomeStore> = {
 const actions: ActionTree<HomeStore, RootStore> = {
   fetchLocalPacks: ({ commit }) => {
     const { ipcRenderer } = window._api;
-    ipcRenderer.on(
+    ipcRenderer.once(
       EVENT_LIST_LOCAL_PACKS,
       (_: IpcRendererEvent, args: any[]) => {
         const packs = args[0] as string[];
