@@ -76,14 +76,8 @@ export default defineComponent({
     const filterPageSizes = computed(() => home.filterPageSizes);
     const totalRecords = computed(() => translations.total);
 
-    const save = ({
-      ids,
-      detail,
-    }: {
-      ids: number[];
-      detail: TranslationRecord;
-    }) => {
-      saveRecords(ids, detail, fetchArgs.value);
+    const save = (records: TranslationRecord[]) => {
+      saveRecords(records, fetchArgs.value);
     };
 
     checkAndFetchSources();

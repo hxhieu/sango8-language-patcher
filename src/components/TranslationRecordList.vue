@@ -106,10 +106,15 @@ export default defineComponent({
     };
 
     const saveRecords = (detail: TranslationRecord) => {
-      emit('save', {
-        ids: recordsToEdit.value.map(x => x.id),
-        detail,
-      });
+      const { text, notes } = detail;
+      emit(
+        'save',
+        recordsToEdit.value.map(x => ({
+          ...x,
+          text,
+          notes,
+        })),
+      );
       recordsToEdit.value = [];
     };
 

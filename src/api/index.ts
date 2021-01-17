@@ -7,6 +7,7 @@ import {
   EVENT_FETCH_RECORDS,
   DEBUG_PARSE_SOURCES,
   EVENT_LIST_LOCAL_PACKS,
+  EVENT_SAVE_RECORDS,
 } from './const';
 import { checkCreateWorkDir } from './dirUtils';
 import { parseSources } from './debug/parseSources';
@@ -15,7 +16,8 @@ import { checkSources } from './checkSources';
 import { fetchPacks } from './fetchPacks';
 import { fetchRecords } from './fetchRecords';
 import { listPacks } from './localPackUtils';
-import { FetchRecordArgs } from '@/interfaces';
+import { FetchRecordArgs, TranslationRecord } from '@/interfaces';
+import { saveRecords } from './saveRecords';
 
 const handleInvocations = () => {
   // Debug events
@@ -82,6 +84,22 @@ const handleInvocations = () => {
       log(e.message, 'error');
     }
   });
+
+  ipcMain.handle(
+    EVENT_SAVE_RECORDS,
+    async (
+      e: IpcMainInvokeEvent,
+      records: TranslationRecord[],
+      args: FetchRecordArgs,
+    ) => {
+      try {
+        await saveRecords(records, args);
+        e.sender.send(EVENT_SAVE_RECORDS);
+      } catch (e) {
+        log(e.message, 'error');
+      }
+    },
+  );
 };
 
 export { handleInvocations };

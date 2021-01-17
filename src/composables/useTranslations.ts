@@ -7,13 +7,11 @@ const fetchRecords = (dispatch: Dispatch, args: FetchRecordArgs) => {
 
 const saveRecords = (
   dispatch: Dispatch,
-  ids: number[],
-  detail: TranslationRecord,
+  records: TranslationRecord[],
   args: FetchRecordArgs,
 ) => {
   dispatch('translations/saveRecords', {
-    ids,
-    detail,
+    records,
     args,
   });
 };
@@ -22,11 +20,8 @@ const useTranslations = () => {
   const { dispatch } = useStore();
   return {
     fetchRecords: (args: FetchRecordArgs) => fetchRecords(dispatch, args),
-    saveRecords: (
-      ids: number[],
-      detail: TranslationRecord,
-      args: FetchRecordArgs,
-    ) => saveRecords(dispatch, ids, detail, args),
+    saveRecords: (records: TranslationRecord[], args: FetchRecordArgs) =>
+      saveRecords(dispatch, records, args),
   };
 };
 
