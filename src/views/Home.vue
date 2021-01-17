@@ -12,7 +12,11 @@
       :totalRecords="totalRecords"
       v-model:value="filterModel"
     />
-    <TranslationRecordList v-if="packListModel.local" :records="records" />
+    <TranslationRecordList
+      v-if="packListModel.local"
+      :records="records"
+      :totalRecords="totalRecords"
+    />
   </div>
 </template>
 
@@ -104,6 +108,9 @@ export default defineComponent({
 .record-filters {
   .p-panel-header {
     border-top: 0 !important;
+  }
+  .p-panel-content {
+    border-bottom: 0 !important;
   }
 }
 .translation-records-list {

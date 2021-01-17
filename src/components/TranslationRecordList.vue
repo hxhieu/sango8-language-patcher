@@ -1,14 +1,19 @@
 <template>
   <div class="translation-records-list">
     <DataTable
-      class="p-datatable-sm"
+      class="p-datatable-sm p-datatable-gridlines"
       :value="model"
       :scrollable="true"
       scrollHeight="flex"
       dataKey="id"
       v-model:selection="selection"
     >
-      <Column selectionMode="multiple" headerStyle="width: 2em"></Column>
+      <template #header>
+        <div class="table-header">
+          Showing {{ model.length }} of total {{ total }} records
+        </div>
+      </template>
+      <Column selectionMode="multiple" headerStyle="width: 38px"></Column>
       <Column field="id" header="ID" headerStyle="width: 80px"></Column>
       <Column field="original" header="Original"></Column>
       <Column field="text" header="Translation"></Column>
@@ -61,12 +66,20 @@ export default defineComponent({
     Menu,
   },
   props: {
-    records: Array,
+    records: {
+      type: Array,
+    },
+    totalRecords: {
+      type: Number,
+    },
   },
   setup(props) {
     const model = computed<TranslationRecord>(
       () => (props.records as unknown) as TranslationRecord,
     );
+
+    const total = computed(() => props.totalRecords);
+
     const selection = ref<number[]>();
     const bulkMenu = ref();
     const bulkMenuItems = ref([
@@ -90,6 +103,7 @@ export default defineComponent({
     return {
       model,
       selection,
+      total,
       bulkMenu,
       bulkMenuItems,
       toggleBulkMenu,
@@ -102,6 +116,10 @@ export default defineComponent({
 .no-records {
   display: flex;
   justify-content: center;
+}
+
+.table-header {
+  padding: 0 20px;
 }
 
 #bulk-menu {

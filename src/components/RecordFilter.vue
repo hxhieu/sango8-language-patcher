@@ -35,7 +35,7 @@
 
 <script lang="ts">
 import { RecordFilterModel } from '@/interfaces';
-import { computed, defineComponent, ref, watch } from 'vue';
+import { computed, defineComponent, ref } from 'vue';
 import InputSwitch from 'primevue/inputswitch';
 
 export default defineComponent({
