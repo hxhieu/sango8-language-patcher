@@ -22,3 +22,12 @@ export interface PackListModel {
   source?: string;
   fileType?: string;
 }
+
+export interface RecordFilterModel {
+  search?: string;
+  pageIndex: number;
+  pageSize: number;
+  exact: boolean;
+}
+
+export type FetchRecordArgs = PackListModel & RecordFilterModel;

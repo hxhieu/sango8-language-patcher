@@ -9,6 +9,7 @@ import Panel from 'primevue/panel';
 import Button from 'primevue/button';
 import Dropdown from 'primevue/dropdown';
 import Divider from 'primevue/divider';
+import InputText from 'primevue/inputtext';
 
 export default (app: App) => {
   app
@@ -16,5 +17,6 @@ export default (app: App) => {
     .component('Panel', Panel)
     .component('Button', Button)
     .component('Dropdown', Dropdown)
+    .component('InputText', InputText)
     .component('Divider', Divider);
 };

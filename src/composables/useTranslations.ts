@@ -1,17 +1,22 @@
+import { FetchRecordArgs } from '@/interfaces';
 import { Dispatch, useStore } from 'vuex';
 
-const fetchRecords = (dispatch: Dispatch, locale?: string, source?: string) => {
+const fetchRecords = (
+  dispatch: Dispatch,
+  args: FetchRecordArgs,
+  locale?: string,
+) => {
   dispatch('translations/fetchRecords', {
     locale,
-    source,
+    args,
   });
 };
 
 const useTranslations = () => {
   const { dispatch } = useStore();
   return {
-    fetchRecords: (locale?: string, source?: string) =>
-      fetchRecords(dispatch, locale, source),
+    fetchRecords: (args: FetchRecordArgs, locale?: string) =>
+      fetchRecords(dispatch, args, locale),
   };
 };
 

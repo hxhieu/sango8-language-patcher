@@ -62,13 +62,14 @@ const handleInvocations = () => {
     EVENT_FETCH_RECORDS,
     async (e: IpcMainInvokeEvent, args: any[]) => {
       try {
-        const records = await fetchRecords(
-          args[0],
-          args[1],
-          args[2],
-          args[3] && parseInt(args[3], 10),
-          args[4] && parseInt(args[4], 10),
-        );
+        console.log(args);
+        const records = await fetchRecords(args[0], {
+          fileType: args[1],
+          search: args[2],
+          pageIndex: args[3],
+          pageSize: args[4],
+          exact: args[5],
+        });
         e.sender.send(EVENT_FETCH_RECORDS, [records]);
       } catch (e) {
         log(e.message, 'error');

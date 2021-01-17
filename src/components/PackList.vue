@@ -1,26 +1,34 @@
 <template>
-  <Panel header="Pack settings">
-    <div class="pack-settings">
-      <div class="pack">
-        <label>Local pack</label>
-        <Dropdown
-          :options="localPacks"
-          @change="change"
-          v-model="model.local"
-          placeholder="Select a local pack"
-        />
-        <Dropdown
-          v-if="!!model.local"
-          :options="fileTypes"
-          @change="change"
-          v-model="model.fileType"
-          placeholder="Select a file type"
-        />
-        <Button>New pack</Button>
+  <Panel header="Pack settings" :toggleable="true" class="pack-settings">
+    <div class="form-section">
+      <div class="form-section form-control">
+        <div class="form-section form-control" v-if="localPacks.length > 0">
+          <label class="form-control">Local pack</label>
+          <Dropdown
+            class="form-control"
+            :options="localPacks"
+            @change="change"
+            v-model="model.local"
+            placeholder="Select a local pack"
+          />
+          <Dropdown
+            class="form-control"
+            v-if="!!model.local"
+            :options="fileTypes"
+            @change="change"
+            v-model="model.fileType"
+            placeholder="Select a file type"
+          />
+        </div>
+        <label v-else class="form-control"
+          >You do not have a pack, create one first</label
+        >
+        <Button class="form-control">New pack</Button>
       </div>
-      <div class="pack">
-        <label>Source pack</label>
+      <div class="form-section form-control">
+        <label class="form-control">Source pack</label>
         <Dropdown
+          class="form-control"
           :options="sourcePacks"
           @change="change"
           v-model="model.source"
@@ -78,19 +86,11 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.pack-settings,
-.pack {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-
-  > * {
-    margin-right: 10px;
-  }
-
-  .p-selectbutton {
-    display: flex;
-    cursor: pointer;
+.pack-settings {
+  .p-panel-content {
+    & > div {
+      justify-content: space-between;
+    }
   }
 }
 </style>

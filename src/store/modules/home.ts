@@ -8,6 +8,8 @@ export interface HomeStore {
   localPacks: string[];
   sourcePacks: string[];
   fileTypes: string[];
+  filterPageSizes: number[];
+  pageCount: number;
 }
 
 const state: HomeStore = {
@@ -15,6 +17,8 @@ const state: HomeStore = {
   sourcePacks: [],
   // TODO: From backend
   fileTypes: ['full', 'part'],
+  filterPageSizes: [50, 100, 200, 500],
+  pageCount: 0,
 };
 
 const mutations: MutationTree<HomeStore> = {

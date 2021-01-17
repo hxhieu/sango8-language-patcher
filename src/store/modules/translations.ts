@@ -1,5 +1,5 @@
 import { EVENT_FETCH_RECORDS } from '@/api/const';
-import { TranslationRecord } from '@/interfaces';
+import { FetchRecordArgs, TranslationRecord } from '@/interfaces';
 import { IpcRendererEvent } from 'electron';
 import { ActionTree, GetterTree, MutationTree } from 'vuex';
 import { RootStore } from '../';
@@ -22,14 +22,23 @@ const mutations: MutationTree<TranslationStore> = {
 const actions: ActionTree<TranslationStore, RootStore> = {
   fetchRecords: (
     { commit },
-    { locale, source }: { locale: string; source: string },
+    { locale, args }: { locale: string; args: FetchRecordArgs },
   ) => {
     const { ipcRenderer } = window._api;
     ipcRenderer.on(EVENT_FETCH_RECORDS, (_: IpcRendererEvent, args: any[]) => {
       const records = args[0] as TranslationRecord[];
       commit(TRANSLATIONS_SET_ALL_RECORDS, records);
     });
-    ipcRenderer.invoke(EVENT_FETCH_RECORDS, [locale, source]);
+    const { fileType, search, pageIndex, pageSize, exact } = args;
+    ipcRenderer.invoke(EVENT_FETCH_RECORDS, [
+      locale,
+      fileType,
+      search,
+      // Backend is zero based while frontend is 1 based
+      pageIndex - 1,
+      pageSize,
+      exact,
+    ]);
   },
 };
 

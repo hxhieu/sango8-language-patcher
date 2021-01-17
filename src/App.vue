@@ -126,5 +126,13 @@ body {
       }
     }
   }
+
+  .form-section {
+    display: flex;
+    align-items: center;
+    .form-control {
+      margin-right: 10px;
+    }
+  }
 }
 </style>
