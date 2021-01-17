@@ -1,5 +1,6 @@
 <template>
   <Toast position="top-right" class="toast" />
+  <ConfirmDialog />
   <div id="loader" v-if="showLoading">
     <div class="spinner">
       <ProgressSpinner strokeWidth="4" animationDuration="1s" />
@@ -17,6 +18,7 @@ import { useStore } from 'vuex';
 import { IpcRendererEvent } from 'electron';
 import { useToast } from 'primevue/usetoast';
 import Toast from 'primevue/toast';
+import ConfirmDialog from 'primevue/confirmdialog';
 import BlockUI from 'primevue/blockui';
 import ProgressSpinner from 'primevue/progressspinner';
 
@@ -32,6 +34,7 @@ export default defineComponent({
   name: 'App',
   components: {
     Toast,
+    ConfirmDialog,
     BlockUI,
     ProgressSpinner,
     Footer,

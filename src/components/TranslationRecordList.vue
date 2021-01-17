@@ -37,8 +37,12 @@
             />
           </div>
         </template>
-        <template #body>
-          <Button class="p-button-outlined p-button-sm">Edit</Button>
+        <template #body="slotProps">
+          <Button
+            class="p-button-outlined p-button-sm"
+            @click="editRecords([slotProps.data])"
+            >Edit</Button
+          >
         </template>
       </Column>
       <template #empty>
@@ -48,6 +52,12 @@
       </template>
     </DataTable>
   </div>
+  <EditRecords
+    :records="recordsToEdit"
+    :show="showEditForm"
+    @hide="showEditForm = false"
+    @save="saveRecords"
+  />
 </template>
 
 <script lang="ts">
@@ -58,12 +68,15 @@ import Menu from 'primevue/menu';
 
 import { TranslationRecord } from '@/interfaces';
 
+import EditRecords from './EditRecords.vue';
+
 export default defineComponent({
   name: 'RecordList',
   components: {
     DataTable,
     Column,
     Menu,
+    EditRecords,
   },
   props: {
     records: {
@@ -80,14 +93,29 @@ export default defineComponent({
 
     const total = computed(() => props.totalRecords);
 
-    const selection = ref<number[]>();
+    const selection = ref<TranslationRecord[]>([]);
     const bulkMenu = ref();
+    const recordsToEdit = ref<TranslationRecord[]>([]);
+    const showEditForm = ref(false);
+
+    const editRecords = (records: TranslationRecord[]) => {
+      selection.value = [];
+      recordsToEdit.value = records;
+      showEditForm.value = true;
+    };
+
+    const saveRecords = (detail: TranslationRecord) => {
+      console.log(detail);
+      console.log(recordsToEdit.value.length);
+      recordsToEdit.value = [];
+    };
+
     const bulkMenuItems = ref([
       {
         label: 'Edit selected',
         icon: 'pi pi-pencil',
         command: () => {
-          console.log('aaa');
+          editRecords(selection.value);
         },
       },
     ]);
@@ -107,6 +135,10 @@ export default defineComponent({
       bulkMenu,
       bulkMenuItems,
       toggleBulkMenu,
+      editRecords,
+      recordsToEdit,
+      showEditForm,
+      saveRecords,
     };
   },
 });

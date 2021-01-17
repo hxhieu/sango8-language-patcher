@@ -9,6 +9,8 @@ import { App } from 'vue';
 import 'primeicons/primeicons.css';
 
 import ToastService from 'primevue/toastservice';
+import ConfirmationService from 'primevue/confirmationservice';
+
 import Panel from 'primevue/panel';
 import Button from 'primevue/button';
 import Dropdown from 'primevue/dropdown';
@@ -19,6 +21,7 @@ import Message from 'primevue/inlinemessage';
 export default (app: App) => {
   app
     .use(ToastService)
+    .use(ConfirmationService)
     .component('Panel', Panel)
     .component('Button', Button)
     .component('Dropdown', Dropdown)
