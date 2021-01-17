@@ -66,11 +66,9 @@ const actions: ActionTree<TranslationStore, RootStore> = {
     const { ipcRenderer } = window._api;
     ipcRenderer.once(EVENT_SAVE_RECORDS, () => {
       // Refetch from the backend
-      dispatch('translations/fetchRecords', {
-        args,
-      });
+      dispatch('translations/fetchRecords', args);
     });
-    ipcRenderer.invoke(EVENT_SAVE_RECORDS, [ids, detail]);
+    ipcRenderer.invoke(EVENT_SAVE_RECORDS, ids, detail);
   },
 };
 

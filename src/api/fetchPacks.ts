@@ -22,11 +22,11 @@ const fetchPacks = async (sender: WebContents, locale: string) =>
           .then(response => {
             const { data, headers } = response;
             let current = 0;
-            const total = headers['content-length'];
+            const total = parseInt(headers['content-length'], 10);
 
             data.on('data', (chunk: any) => {
               current += chunk.length;
-              sender.send(EVENT_DOWNLOAD_PROGRESS, [current, total]);
+              sender.send(EVENT_DOWNLOAD_PROGRESS, current, total);
             });
 
             const file = createWriteStream(join(workDir, `${packFileName}`));

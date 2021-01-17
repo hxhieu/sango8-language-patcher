@@ -20,9 +20,9 @@ import { FetchRecordArgs } from '@/interfaces';
 const handleInvocations = () => {
   // Debug events
   if (process.env.NODE_ENV !== 'production') {
-    ipcMain.handle(DEBUG_PARSE_SOURCES, async (_, args) => {
+    ipcMain.handle(DEBUG_PARSE_SOURCES, async (_, variant: string) => {
       try {
-        await parseSources(args[0]);
+        await parseSources(variant);
       } catch (e) {
         log(e.message, 'error');
       }
@@ -32,7 +32,7 @@ const handleInvocations = () => {
   ipcMain.handle(EVENT_CHECK_SOURCES, (e: IpcMainInvokeEvent) => {
     try {
       const valid = checkSources();
-      e.sender.send(EVENT_CHECK_SOURCES, [valid]);
+      e.sender.send(EVENT_CHECK_SOURCES, valid);
     } catch (e) {
       log(e.message, 'error');
     }
@@ -46,19 +46,21 @@ const handleInvocations = () => {
     }
   });
 
+  // Download packs from repo
   ipcMain.handle(
     EVENT_FETCH_PACKS,
-    async (e: IpcMainInvokeEvent, args: any[]) => {
+    async (e: IpcMainInvokeEvent, locale: string) => {
       try {
-        await fetchPacks(e.sender, args[0]);
-        e.sender.send(EVENT_FETCH_PACKS, [true]);
+        await fetchPacks(e.sender, locale);
+        e.sender.send(EVENT_FETCH_PACKS, true);
       } catch (e) {
         log(e.message, 'error');
-        e.sender.send(EVENT_FETCH_PACKS, [false]);
+        e.sender.send(EVENT_FETCH_PACKS, false);
       }
     },
   );
 
+  // Fetch local translations
   ipcMain.handle(
     EVENT_FETCH_RECORDS,
     async (e: IpcMainInvokeEvent, args: FetchRecordArgs) => {
@@ -71,10 +73,11 @@ const handleInvocations = () => {
     },
   );
 
+  // List local translation folders
   ipcMain.handle(EVENT_LIST_LOCAL_PACKS, async (e: IpcMainInvokeEvent) => {
     try {
       const packs = await listPacks();
-      e.sender.send(EVENT_LIST_LOCAL_PACKS, [packs]);
+      e.sender.send(EVENT_LIST_LOCAL_PACKS, packs);
     } catch (e) {
       log(e.message, 'error');
     }

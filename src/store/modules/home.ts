@@ -33,8 +33,7 @@ const actions: ActionTree<HomeStore, RootStore> = {
     const { ipcRenderer } = window._api;
     ipcRenderer.once(
       EVENT_LIST_LOCAL_PACKS,
-      (_: IpcRendererEvent, args: any[]) => {
-        const packs = args[0] as string[];
+      (_: IpcRendererEvent, packs: string[]) => {
         commit(HOME_LOCAL_PACKS, packs);
       },
     );
