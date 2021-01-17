@@ -8,9 +8,17 @@ let cache: { [key: string]: PackArchive } = {};
 
 const fetchRecords = async (
   args: FetchRecordArgs,
-  invalidateCache: boolean = false,
 ): Promise<[TranslationRecord[], number]> => {
-  const { local, source, search, fileType, pageIndex, pageSize, exact } = args;
+  const {
+    clearCache,
+    local,
+    source,
+    search,
+    fileType,
+    pageIndex,
+    pageSize,
+    exact,
+  } = args;
   // Defaults
   const sourceLocale = source || 'zh-tw';
   const localLocale = local || '';
@@ -19,7 +27,7 @@ const fetchRecords = async (
   let result: TranslationRecord[] = [];
 
   // Reload the data if the cache is invalid
-  if (invalidateCache || !cache[localLocale] || !cache[sourceLocale]) {
+  if (clearCache || !cache[localLocale] || !cache[sourceLocale]) {
     const sourcePack = await readArchive(sourceLocale);
     if (!sourcePack) {
       throw new Error(

@@ -30,4 +30,5 @@ export interface RecordFilterModel {
   exact: boolean;
 }
 
-export type FetchRecordArgs = PackListModel & RecordFilterModel;
+export type FetchRecordArgs = { clearCache?: boolean } & PackListModel &
+  RecordFilterModel;

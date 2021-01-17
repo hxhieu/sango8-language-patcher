@@ -10,6 +10,11 @@ const saveRecords = (
   records: TranslationRecord[],
   args: FetchRecordArgs,
 ) => {
+  // Need to clear cache to load updated records
+  args = {
+    ...args,
+    clearCache: true,
+  };
   dispatch('translations/saveRecords', {
     records,
     args,

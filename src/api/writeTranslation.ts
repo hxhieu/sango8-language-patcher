@@ -35,9 +35,8 @@ const writeTranslation = async (
     );
   }
   const translationId = `${locale}.${translationType}`;
-  log(`Start saving translation records: ${translationId}...`);
   await Promise.all(batch);
-  log(`Start saving translation records: ${translationId}...DONE`, 'success');
+  log(`The record(s) for '${translationId}' has been saved`, 'success');
 };
 
 export { writeTranslation };
