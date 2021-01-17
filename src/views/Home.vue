@@ -9,6 +9,7 @@
     <RecordFilter
       v-if="packListModel.local"
       :pageSizes="filterPageSizes"
+      :totalRecords="totalRecords"
       v-model:value="filterModel"
     />
     <ul>
@@ -44,13 +45,6 @@ export default defineComponent({
     const { fetchLocalPacks } = useHome();
     const { state } = useStore<RootStore>();
 
-    const records = computed(() => state.translations.records);
-    const localPacks = computed(() => state.home.localPacks);
-    const sourcePacks = computed(() => state.home.sourcePacks);
-    const fileTypes = computed(() => state.home.fileTypes);
-
-    const filterPageSizes = computed(() => state.home.filterPageSizes);
-
     const packListModel = ref<PackListModel>({
       source: 'zh-tw',
     });
@@ -60,6 +54,14 @@ export default defineComponent({
       pageSize: 100,
       exact: false,
     });
+
+    const records = computed(() => state.translations.records);
+    const localPacks = computed(() => state.home.localPacks);
+    const sourcePacks = computed(() => state.home.sourcePacks);
+    const fileTypes = computed(() => state.home.fileTypes);
+
+    const filterPageSizes = computed(() => state.home.filterPageSizes);
+    const totalRecords = computed(() => state.translations.total);
 
     checkAndFetchSources();
     fetchLocalPacks();
@@ -88,6 +90,7 @@ export default defineComponent({
       packListModel,
       filterPageSizes,
       filterModel,
+      totalRecords,
     };
   },
 });

@@ -10,7 +10,7 @@ const fetchRecords = async (
   locale: string,
   args: FetchRecordArgs,
   invalidateCache: boolean = false,
-): Promise<TranslationRecord[]> => {
+): Promise<[TranslationRecord[], number]> => {
   let result: TranslationRecord[] = [];
   // Load the data
   if (invalidateCache || !cache[locale]) {
@@ -44,11 +44,13 @@ const fetchRecords = async (
     }
   }
 
+  const total = result.length;
+
   // sort
   result = result.sort((a, b) => (a.id > b.id ? 1 : -1));
   // paging
-  result = result.splice(pageIndex, pageSize);
-  return result;
+  result = result.splice(pageIndex * pageSize, pageSize);
+  return [result, total];
 };
 
 export { fetchRecords };

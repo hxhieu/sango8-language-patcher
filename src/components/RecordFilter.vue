@@ -9,11 +9,7 @@
           v-model="searchInternal"
         />
         <label class="form-control">Exact</label>
-        <InputSwitch
-          class="form-control"
-          v-model="model.exact"
-          @change="change"
-        />
+        <InputSwitch class="form-control" v-model="exactInternal" />
         <Button class="form-control" label="Search" @click="change" />
       </div>
       <div class="form-section form-control page">
@@ -39,7 +35,7 @@
 
 <script lang="ts">
 import { RecordFilterModel } from '@/interfaces';
-import { computed, defineComponent, ref } from 'vue';
+import { computed, defineComponent, ref, watch } from 'vue';
 import InputSwitch from 'primevue/inputswitch';
 
 export default defineComponent({
@@ -57,7 +53,7 @@ export default defineComponent({
     pageSize: {
       type: Number,
     },
-    pageCount: {
+    totalRecords: {
       type: Number,
     },
     pageSizes: {
@@ -80,11 +76,15 @@ export default defineComponent({
     });
 
     const searchInternal = ref(model.value.search);
+    const exactInternal = ref(model.value.exact);
 
     const sizes = computed(() => props.pageSizes || []);
     const pages = computed(() => {
       const result: number[] = [];
-      for (let i = 1; i <= (props.pageCount || 1); i++) {
+      const pageCount = Math.ceil(
+        (props.totalRecords || 1) / model.value.pageSize,
+      );
+      for (let i = 1; i <= pageCount; i++) {
         result.push(i);
       }
       return result;
@@ -92,6 +92,7 @@ export default defineComponent({
 
     const change = () => {
       model.value.search = searchInternal.value;
+      model.value.exact = exactInternal.value;
       emit('update:value', model.value);
     };
 
@@ -100,6 +101,7 @@ export default defineComponent({
       pages,
       model,
       searchInternal,
+      exactInternal,
       change,
     };
   },
