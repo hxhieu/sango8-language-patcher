@@ -10,6 +10,7 @@ import Button from 'primevue/button';
 import Dropdown from 'primevue/dropdown';
 import Divider from 'primevue/divider';
 import InputText from 'primevue/inputtext';
+import Message from 'primevue/inlinemessage';
 
 export default (app: App) => {
   app
@@ -18,5 +19,6 @@ export default (app: App) => {
     .component('Button', Button)
     .component('Dropdown', Dropdown)
     .component('InputText', InputText)
+    .component('Message', Message)
     .component('Divider', Divider);
 };

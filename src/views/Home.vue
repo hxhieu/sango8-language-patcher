@@ -12,11 +12,7 @@
       :totalRecords="totalRecords"
       v-model:value="filterModel"
     />
-    <ul>
-      <li v-for="record in records" :key="record.id">
-        [{{ record.id }}] {{ record.text }}
-      </li>
-    </ul>
+    <TranslationRecordList v-if="packListModel.local" :records="records" />
   </div>
 </template>
 
@@ -25,8 +21,11 @@ import { computed, defineComponent, ref, watch } from 'vue';
 import { useStore } from 'vuex';
 import { useHome, useInitialise, useTranslations } from '@/composables';
 import { RootStore } from '@/store';
+
 import PackList from '@/components/PackList.vue';
 import RecordFilter from '@/components/RecordFilter.vue';
+import TranslationRecordList from '@/components/TranslationRecordList.vue';
+
 import {
   FetchRecordArgs,
   PackListModel,
@@ -38,6 +37,7 @@ export default defineComponent({
   components: {
     PackList,
     RecordFilter,
+    TranslationRecordList,
   },
   setup() {
     const { checkAndFetchSources } = useInitialise();
@@ -97,9 +97,17 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
+.home {
+  display: flex;
+  flex-direction: column;
+}
 .record-filters {
   .p-panel-header {
     border-top: 0 !important;
   }
+}
+.translation-records-list {
+  flex: 1;
+  overflow: hidden;
 }
 </style>

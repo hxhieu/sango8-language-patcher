@@ -61,6 +61,16 @@ export default defineComponent({
 <style lang="scss">
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100;400;700&display=swap');
 
+::-webkit-scrollbar {
+  background-color: var(--surface-d);
+  width: 0.75em;
+}
+
+::-webkit-scrollbar-thumb:window-inactive,
+::-webkit-scrollbar-thumb {
+  background: var(--surface-b);
+}
+
 html,
 body {
   padding: 0;

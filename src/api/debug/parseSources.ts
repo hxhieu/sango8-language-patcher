@@ -33,7 +33,7 @@ const readSource = (source?: string): TranslationRecord[] => {
       const raw = arr[i];
       result.push({
         id: raw[0],
-        text: raw[1],
+        original: raw[1],
       });
     }
   }
