@@ -10,6 +10,9 @@ export const packDownloadUrl =
 
 export const packExt = 'lz';
 
+export const sourceFullHeader = [25683, 0, 0, ['id', 'text']];
+export const sourcePartHeader = [72, 0, 0, ['id', 'text']];
+
 // Read the raw file into folders
 export const DEBUG_PARSE_SOURCES = 'DEBUG_PARSE_SOURCES';
 
@@ -23,3 +26,4 @@ export const EVENT_LIST_LOCAL_PACKS = 'EVENT_LIST_LOCAL_PACKS';
 export const EVENT_SAVE_RECORDS = 'EVENT_SAVE_RECORDS';
 export const EVENT_TRANSLATE_RECORDS = 'EVENT_TRANSLATE_RECORDS';
 export const EVENT_TRANSLATE_RECORDS_BATCH = 'EVENT_TRANSLATE_RECORDS_BATCH';
+export const EVENT_CREATE_PATCHES = 'EVENT_CREATE_PATCHES';

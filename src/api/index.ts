@@ -9,6 +9,7 @@ import {
   EVENT_LIST_LOCAL_PACKS,
   EVENT_SAVE_RECORDS,
   EVENT_TRANSLATE_RECORDS,
+  EVENT_CREATE_PATCHES,
 } from './const';
 import { checkCreateWorkDir } from './dirUtils';
 import { parseSources } from './debug/parseSources';
@@ -17,14 +18,19 @@ import { checkSources } from './checkSources';
 import { fetchPacks } from './fetchPacks';
 import { fetchRecords } from './fetchRecords';
 import { listPacks } from './localPackUtils';
-import { FetchRecordArgs, TranslationRecord } from '@/interfaces';
+import {
+  FetchRecordArgs,
+  SourceVariant,
+  TranslationRecord,
+} from '@/interfaces';
 import { saveRecords } from './saveRecords';
 import { translateRecords } from './translateRecords';
+import { createPatches } from './createPatches';
 
 const handleInvocations = () => {
   // Debug events
   if (process.env.NODE_ENV !== 'production') {
-    ipcMain.handle(DEBUG_PARSE_SOURCES, async (_, variant: string) => {
+    ipcMain.handle(DEBUG_PARSE_SOURCES, async (_, variant: SourceVariant) => {
       try {
         await parseSources(variant);
       } catch (e) {
@@ -118,6 +124,19 @@ const handleInvocations = () => {
         log(e.message, 'error');
       } finally {
         e.sender.send(EVENT_TRANSLATE_RECORDS);
+      }
+    },
+  );
+
+  ipcMain.handle(
+    EVENT_CREATE_PATCHES,
+    async (e: IpcMainInvokeEvent, locale: string, variant: SourceVariant) => {
+      try {
+        await createPatches(locale, variant);
+      } catch (e) {
+        log(e.message, 'error');
+      } finally {
+        e.sender.send(EVENT_CREATE_PATCHES);
       }
     },
   );

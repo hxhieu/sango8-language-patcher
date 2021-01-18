@@ -54,9 +54,7 @@ const translateRecords = async (
 
     // Next batch
     currentBatch++;
-    const batch: TranslationBatch = {};
     const translated = await translate(currentBatchRaw, to);
-
     const currentBatchRecords: TranslationRecord[] = [];
 
     translated.split(lineDelimiter).forEach(line => {
@@ -65,7 +63,7 @@ const translateRecords = async (
       if (record) {
         currentBatchRecords.push({
           ...record,
-          text,
+          text: text.trim(),
         });
       }
     });

@@ -1,4 +1,5 @@
 export type LogType = 'info' | 'warn' | 'error' | 'success';
+export type SourceVariant = 'zh-tw' | 'zh-cn';
 
 export interface LogMessage {
   message?: string;
@@ -32,3 +33,8 @@ export interface RecordFilterModel {
 
 export type FetchRecordArgs = { clearCache?: boolean } & PackListModel &
   RecordFilterModel;
+
+export interface PatchHeader {
+  full: any[];
+  part: any[];
+}

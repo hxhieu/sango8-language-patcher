@@ -3,7 +3,7 @@ import { existsSync, mkdirSync, readFile } from 'fs';
 import { promisify } from 'util';
 
 import { workDir, packDir } from '../const';
-import { TranslationRecord } from '@/interfaces';
+import { SourceVariant, TranslationRecord } from '@/interfaces';
 import { writeTranslation } from '../writeTranslation';
 import { createArchive } from '../archiveUtils';
 
@@ -45,10 +45,7 @@ const readSource = (source?: string): TranslationRecord[] => {
   return result;
 };
 
-const parseSources = async (variant: string): Promise<void> => {
-  if (variant !== 'zh-tw' && variant !== 'zh-cn') {
-    return;
-  }
+const parseSources = async (variant: SourceVariant): Promise<void> => {
   if (!existsSync(sourceDir)) {
     return;
   }
