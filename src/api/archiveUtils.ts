@@ -1,19 +1,21 @@
 import { join } from 'path';
 import { workDir, packExt } from './const';
-import { existsSync, readFile, writeFile } from 'graceful-fs';
-import { promisify } from 'util';
+import { existsSync } from 'graceful-fs';
 import lz from 'lzutf8';
 import { PackArchive } from '@/interfaces';
 import { loadLocalPack } from './localPackUtils';
+import { readFileAsync, writeFileAsync } from './nodeApi';
 
-// TODO: Make helper for these
-const readFileAsync = promisify(readFile);
-const writeFileAsync = promisify(writeFile);
+const writeArchive = async (locale: string, archive: PackArchive) => {
+  const bytes: Buffer = lz.compress(Buffer.from(JSON.stringify(archive)));
+  await writeFileAsync(join(workDir, `${locale}.${packExt}`), bytes);
+};
+
+const createArchiveFromMemory = writeArchive;
 
 const createArchive = async (locale: string, version: any = 'devel') => {
   const archive = await loadLocalPack(locale, version);
-  const bytes: Buffer = lz.compress(Buffer.from(JSON.stringify(archive)));
-  await writeFileAsync(join(workDir, `${locale}.${packExt}`), bytes);
+  await writeArchive(locale, archive);
 };
 
 const readArchive = async (
@@ -27,4 +29,4 @@ const readArchive = async (
   }
 };
 
-export { createArchive, readArchive };
+export { createArchive, readArchive, createArchiveFromMemory };

@@ -3,9 +3,9 @@ import { existsSync, mkdirSync, readFile } from 'fs';
 import { promisify } from 'util';
 
 import { workDir, packDir } from '../const';
-import { SourceVariant, TranslationRecord } from '@/interfaces';
+import { PackArchive, SourceVariant, TranslationRecord } from '@/interfaces';
+import { createArchiveFromMemory } from '../archiveUtils';
 import { writeTranslation } from '../writeTranslation';
-import { createArchive } from '../archiveUtils';
 
 const sourceDir = join(workDir, 'sources');
 
@@ -45,7 +45,10 @@ const readSource = (source?: string): TranslationRecord[] => {
   return result;
 };
 
-const parseSources = async (variant: SourceVariant): Promise<void> => {
+const parseSources = async (
+  variant: SourceVariant,
+  version: any = 'devel',
+): Promise<void> => {
   if (!existsSync(sourceDir)) {
     return;
   }
@@ -53,13 +56,20 @@ const parseSources = async (variant: SourceVariant): Promise<void> => {
   if (!existsSync(translationDir)) {
     mkdirSync(translationDir, { recursive: true });
   }
-  const partSrc = readSource(await readSourceRaw(variant, 'Part'));
-  const fullSrc = readSource(await readSourceRaw(variant, 'Full'));
-  await writeTranslation(variant, partSrc, true);
-  await writeTranslation(variant, fullSrc);
+  const part = readSource(await readSourceRaw(variant, 'Part'));
+  const full = readSource(await readSourceRaw(variant, 'Full'));
 
-  // Also pack it
-  await createArchive(variant);
+  await writeTranslation(variant, part, true, true);
+  await writeTranslation(variant, full, false, true);
+
+  const archive: PackArchive = {
+    version,
+    full,
+    part,
+  };
+
+  // Pack it
+  await createArchiveFromMemory(variant, archive);
 };
 
 export { parseSources };
