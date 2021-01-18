@@ -1,14 +1,16 @@
 import { FetchRecordArgs, TranslationRecord } from '@/interfaces';
 import { fetchRecords } from './fetchRecords';
-import { log } from './logger';
 import { TranslationService } from './translationServices';
 import { writeTranslation } from './writeTranslation';
+import { WebContents } from 'electron';
+import { EVENT_TRANSLATE_RECORDS_BATCH } from './const';
 
 interface TranslationBatch {
   [key: number]: string | undefined;
 }
 
 const translateRecords = async (
+  sender: WebContents,
   provider: string,
   records: TranslationRecord[],
   args: FetchRecordArgs,
@@ -17,8 +19,12 @@ const translateRecords = async (
   if (!local) {
     return;
   }
+  const { translate, maxRequestCharacters } = (await import(
+    `./translationServices/${provider}`
+  )) as TranslationService;
 
   const to = local.split('.')[0];
+  const lineDelimiter = '\n';
 
   // Translate all
   if (records.length === 0) {
@@ -29,45 +35,43 @@ const translateRecords = async (
     });
   }
 
-  const { translate, maxRequestCharacters } = (await import(
-    `./translationServices/${provider}`
-  )) as TranslationService;
+  const allRaw = records.map(x => `${x.id}:${x.original}`).join('\n');
+  const totalBatches = Math.ceil(allRaw.length / maxRequestCharacters);
 
   //Loop and translate batch
   let currentRecord = 0;
-  let batchCount = 0;
-  let batch: TranslationBatch = {};
+  let currentBatch = 0;
   while (currentRecord < records.length) {
+    let currentBatchRaw = '';
     while (
-      [...JSON.stringify(batch)].length <= maxRequestCharacters &&
+      currentBatchRaw.length <= maxRequestCharacters &&
       currentRecord < records.length
     ) {
       const { id, original } = records[currentRecord];
-      batch[id] = original;
+      currentBatchRaw += `${id}:${original}${lineDelimiter}`;
       currentRecord++;
     }
 
-    // Each batch
-    batchCount++;
-    const json = JSON.stringify(batch);
-    const translated = await translate(json, to);
-    console.log('TRANSLATED: ', translated);
+    // Next batch
+    currentBatch++;
+    const batch: TranslationBatch = {};
+    const translated = await translate(currentBatchRaw, to);
 
-    const result = JSON.parse(
-      // Need to escape for JSON here
-      translated.replace(/"/g, "'").trim(),
-    ) as TranslationBatch;
+    const currentBatchRecords: TranslationRecord[] = [];
 
-    // Update the source
-    for (const record of records) {
-      record.text = result[record.id];
-    }
+    translated.split(lineDelimiter).forEach(line => {
+      const [id, text] = line.split(':');
+      const record = records.find(x => x.id === parseInt(id, 10));
+      if (record) {
+        currentBatchRecords.push({
+          ...record,
+          text,
+        });
+      }
+    });
 
-    await writeTranslation(local, records, fileType === 'part');
-    log(`Batch #${batchCount} translated`, 'success');
-
-    // Reset the batch
-    batch = {};
+    await writeTranslation(local, currentBatchRecords, fileType === 'part');
+    sender.send(EVENT_TRANSLATE_RECORDS_BATCH, currentBatch, totalBatches);
   }
 };
 

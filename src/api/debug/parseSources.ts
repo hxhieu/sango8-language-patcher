@@ -5,6 +5,7 @@ import { promisify } from 'util';
 import { workDir, packDir } from '../const';
 import { TranslationRecord } from '@/interfaces';
 import { writeTranslation } from '../writeTranslation';
+import { createArchive } from '../archiveUtils';
 
 const sourceDir = join(workDir, 'sources');
 
@@ -34,7 +35,9 @@ const readSource = (source?: string): TranslationRecord[] => {
       result.push({
         id: raw[0],
         // Need to escape JSON here
-        original: (raw[1] as string).replace(/"/g, "'"),
+        original: (raw[1] as string)
+          .replace(/"/g, "'")
+          .replace(/(?:\r\n|\r|\n)/g, ''),
       });
     }
   }
@@ -57,6 +60,9 @@ const parseSources = async (variant: string): Promise<void> => {
   const fullSrc = readSource(await readSourceRaw(variant, 'Full'));
   await writeTranslation(variant, partSrc, true);
   await writeTranslation(variant, fullSrc);
+
+  // Also pack it
+  await createArchive(variant);
 };
 
 export { parseSources };

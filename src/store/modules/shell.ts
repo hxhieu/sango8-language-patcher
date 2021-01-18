@@ -8,11 +8,13 @@ export interface ShellStore {
   blockUI: boolean;
   blockText?: string;
   theme: Theme;
+  debug: boolean;
 }
 
 const state: ShellStore = {
   blockUI: false,
   theme: 'dark',
+  debug: process.env.NODE_ENV !== 'production',
 };
 
 const mutations: MutationTree<ShellStore> = {

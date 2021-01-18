@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <DebugPanel />
+    <DebugPanel v-if="debug" />
     <PackList
       :locals="localPacks"
       :sources="sourcePacks"
@@ -45,7 +45,11 @@ import {
   RecordFilterModel,
   TranslationRecord,
 } from '@/interfaces';
-import { EVENT_TRANSLATE_RECORDS } from '@/api/const';
+import {
+  EVENT_TRANSLATE_RECORDS,
+  EVENT_TRANSLATE_RECORDS_BATCH,
+} from '@/api/const';
+import { IpcRendererEvent } from 'electron';
 
 export default defineComponent({
   name: 'Home',
@@ -56,13 +60,16 @@ export default defineComponent({
     DebugPanel,
   },
   setup() {
+    const { ipcRenderer } = window._api;
     const { checkAndFetchSources } = useInitialise();
     const { fetchRecords, saveRecords, translateRecords } = useTranslations();
     const { fetchLocalPacks } = useHome();
     const { block, unblock } = useBlockUi();
     const {
-      state: { translations, home },
+      state: { translations, home, shell },
     } = useStore<RootStore>();
+
+    const debug = computed(() => shell.debug);
 
     const packListModel = ref<PackListModel>({
       source: 'zh-tw',
@@ -115,7 +122,7 @@ export default defineComponent({
         return;
       }
       block('Translating the records');
-      const { ipcRenderer } = window._api;
+
       ipcRenderer.once(EVENT_TRANSLATE_RECORDS, () => {
         unblock();
       });
@@ -124,6 +131,13 @@ export default defineComponent({
 
     checkAndFetchSources();
     fetchLocalPacks();
+
+    ipcRenderer.on(
+      EVENT_TRANSLATE_RECORDS_BATCH,
+      (_: IpcRendererEvent, current: number, total: number) => {
+        block(`Translating batch ${current} of ${total}`);
+      },
+    );
 
     // Refetch the records when filters changed
     watch(
@@ -145,6 +159,7 @@ export default defineComponent({
       totalRecords,
       save,
       translate,
+      debug,
     };
   },
 });

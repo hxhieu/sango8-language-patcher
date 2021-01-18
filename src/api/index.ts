@@ -113,7 +113,7 @@ const handleInvocations = () => {
       args: FetchRecordArgs,
     ) => {
       try {
-        await translateRecords(provider, records, args);
+        await translateRecords(e.sender, provider, records, args);
       } catch (e) {
         log(e.message, 'error');
       } finally {

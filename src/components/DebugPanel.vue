@@ -1,5 +1,5 @@
 <template>
-  <Panel header="Debug">
+  <Panel header="Debug" :toggleable="true" :collapsed="true">
     <div class="debug-panel">
       <Button @click="rebuildSource">Rebuild source</Button>
     </div>
