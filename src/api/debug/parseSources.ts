@@ -33,7 +33,8 @@ const readSource = (source?: string): TranslationRecord[] => {
       const raw = arr[i];
       result.push({
         id: raw[0],
-        original: raw[1],
+        // Need to escape JSON here
+        original: (raw[1] as string).replace(/"/g, "'"),
       });
     }
   }

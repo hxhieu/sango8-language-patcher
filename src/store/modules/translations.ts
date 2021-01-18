@@ -90,7 +90,6 @@ const actions: ActionTree<TranslationStore, RootStore> = {
       // Refetch from the backend
       dispatch('fetchRecords', args);
     });
-    console.log(provider, records, args);
     ipcRenderer.invoke(EVENT_TRANSLATE_RECORDS, provider, records, args);
   },
 };

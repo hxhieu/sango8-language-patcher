@@ -1,5 +1,6 @@
 <template>
   <div class="home">
+    <DebugPanel />
     <PackList
       :locals="localPacks"
       :sources="sourcePacks"
@@ -36,6 +37,7 @@ import { RootStore } from '@/store';
 import PackList from '@/components/PackList.vue';
 import RecordFilter from '@/components/RecordFilter.vue';
 import TranslationRecordList from '@/components/TranslationRecordList.vue';
+import DebugPanel from '@/components/DebugPanel.vue';
 
 import {
   FetchRecordArgs,
@@ -43,6 +45,7 @@ import {
   RecordFilterModel,
   TranslationRecord,
 } from '@/interfaces';
+import { EVENT_TRANSLATE_RECORDS } from '@/api/const';
 
 export default defineComponent({
   name: 'Home',
@@ -50,6 +53,7 @@ export default defineComponent({
     PackList,
     RecordFilter,
     TranslationRecordList,
+    DebugPanel,
   },
   setup() {
     const { checkAndFetchSources } = useInitialise();
@@ -110,6 +114,11 @@ export default defineComponent({
       ) {
         return;
       }
+      block('Translating the records');
+      const { ipcRenderer } = window._api;
+      ipcRenderer.once(EVENT_TRANSLATE_RECORDS, () => {
+        unblock();
+      });
       translateRecords(provider, records, fetchArgs.value);
     };
 
