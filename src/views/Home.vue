@@ -46,6 +46,7 @@ import {
   TranslationRecord,
 } from '@/interfaces';
 import {
+  EVENT_FETCH_RECORDS,
   EVENT_TRANSLATE_RECORDS,
   EVENT_TRANSLATE_RECORDS_BATCH,
 } from '@/api/const';
@@ -139,10 +140,15 @@ export default defineComponent({
       },
     );
 
+    ipcRenderer.on(EVENT_FETCH_RECORDS, () => {
+      unblock();
+    });
+
     // Refetch the records when filters changed
     watch(
       fetchArgs,
       value => {
+        block('Fetching records');
         fetchRecords(value);
       },
       { deep: true },
