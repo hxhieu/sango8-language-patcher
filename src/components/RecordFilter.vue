@@ -1,7 +1,7 @@
 <template>
   <Panel header="Filters" :toggleable="true" class="record-filters">
     <div class="form-section main-form">
-      <div class="form-section form-control search">
+      <form class="form-section form-control search" @keyup.enter="change">
         <InputText
           class="form-control"
           type="text"
@@ -10,8 +10,8 @@
         />
         <label class="form-control">Exact</label>
         <InputSwitch class="form-control" v-model="exactInternal" />
-        <Button class="form-control" label="Search" @click="change" />
-      </div>
+        <Button class="form-control" label="Search" @click="change" autofocus />
+      </form>
       <div class="form-section form-control page">
         <label class="form-control">Page</label>
         <Dropdown

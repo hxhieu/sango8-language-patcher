@@ -19,10 +19,7 @@
       <Column field="text" header="Translation"></Column>
       <Column headerStyle="width: 80px">
         <template #header>
-          <div
-            v-if="selection && selection.length > 0"
-            class="bulk-menu-container"
-          >
+          <div class="bulk-menu-container">
             <Button
               icon="pi pi-cog"
               aria-haspopup="true"
@@ -53,7 +50,7 @@
     </DataTable>
   </div>
   <EditRecords
-    :records="recordsToEdit"
+    :records="editFormRecords"
     :show="showEditForm"
     @hide="showEditForm = false"
     @save="saveRecords"
@@ -86,22 +83,22 @@ export default defineComponent({
       type: Number,
     },
   },
-  emits: ['save'],
+  emits: ['save', 'translate'],
   setup(props, { emit }) {
     const model = computed<TranslationRecord>(
       () => (props.records as unknown) as TranslationRecord,
     );
 
+    const bulkMenu = ref();
+
     const total = computed(() => props.totalRecords);
 
     const selection = ref<TranslationRecord[]>([]);
-    const bulkMenu = ref();
-    const recordsToEdit = ref<TranslationRecord[]>([]);
+    const editFormRecords = ref<TranslationRecord[]>([]);
     const showEditForm = ref(false);
 
     const editRecords = (records: TranslationRecord[]) => {
-      selection.value = [];
-      recordsToEdit.value = records;
+      editFormRecords.value = records;
       showEditForm.value = true;
     };
 
@@ -109,24 +106,64 @@ export default defineComponent({
       const { text, notes } = detail;
       emit(
         'save',
-        recordsToEdit.value.map(x => ({
+        editFormRecords.value.map(x => ({
           ...x,
           text,
           notes,
         })),
       );
-      recordsToEdit.value = [];
+      editFormRecords.value = [];
     };
 
-    const bulkMenuItems = ref([
-      {
-        label: 'Edit selected',
-        icon: 'pi pi-pencil',
-        command: () => {
-          editRecords(selection.value);
-        },
-      },
-    ]);
+    const translateRecords = (provider: string) => {
+      emit('translate', {
+        provider,
+        records: selection.value.map(x => ({ ...x })),
+      });
+    };
+
+    const multiEdit = computed(
+      () => selection.value && selection.value.length > 0,
+    );
+
+    const bulkMenuItems = computed(() => {
+      const items = [];
+      const googleTranslate = {
+        label: 'Google Translate',
+        items: [
+          {
+            label: 'All',
+            icon: 'pi pi-cog',
+            command: () => translateRecords('google'),
+          },
+        ],
+      };
+
+      items.push(googleTranslate);
+
+      if (multiEdit.value) {
+        googleTranslate.items.push({
+          label: 'Selected',
+          icon: 'pi pi-cog',
+          command: () => translateRecords('google'),
+        });
+
+        items.push({
+          label: 'Manual',
+          items: [
+            {
+              label: 'Edit selected',
+              icon: 'pi pi-pencil',
+              command: () => {
+                editRecords(selection.value);
+              },
+            },
+          ],
+        });
+      }
+
+      return items;
+    });
 
     const toggleBulkMenu = (evt: any) => {
       bulkMenu.value.toggle(evt);
@@ -144,9 +181,10 @@ export default defineComponent({
       bulkMenuItems,
       toggleBulkMenu,
       editRecords,
-      recordsToEdit,
+      editFormRecords,
       showEditForm,
       saveRecords,
+      multiEdit,
     };
   },
 });

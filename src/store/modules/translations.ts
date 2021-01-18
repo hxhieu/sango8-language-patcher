@@ -1,4 +1,8 @@
-import { EVENT_FETCH_RECORDS, EVENT_SAVE_RECORDS } from '@/api/const';
+import {
+  EVENT_FETCH_RECORDS,
+  EVENT_SAVE_RECORDS,
+  EVENT_TRANSLATE_RECORDS,
+} from '@/api/const';
 import { FetchRecordArgs, TranslationRecord } from '@/interfaces';
 import { IpcRendererEvent } from 'electron';
 import { ActionTree, GetterTree, MutationTree } from 'vuex';
@@ -67,6 +71,27 @@ const actions: ActionTree<TranslationStore, RootStore> = {
       dispatch('fetchRecords', args);
     });
     ipcRenderer.invoke(EVENT_SAVE_RECORDS, records, args);
+  },
+
+  translateRecords: (
+    { dispatch },
+    {
+      provider,
+      records,
+      args,
+    }: {
+      provider: string;
+      args: FetchRecordArgs;
+      records: TranslationRecord[];
+    },
+  ) => {
+    const { ipcRenderer } = window._api;
+    ipcRenderer.once(EVENT_TRANSLATE_RECORDS, () => {
+      // Refetch from the backend
+      dispatch('fetchRecords', args);
+    });
+    console.log(provider, records, args);
+    ipcRenderer.invoke(EVENT_TRANSLATE_RECORDS, provider, records, args);
   },
 };
 

@@ -24,7 +24,7 @@
         @click="visible = false"
         class="p-button-text"
       />
-      <Button label="Save" icon="pi pi-check" @click="onSave" autofocus />
+      <Button label="Save" icon="pi pi-check" @click="onSave" />
     </template>
   </Dialog>
 </template>
@@ -55,7 +55,7 @@ export default defineComponent({
   setup(props, { emit }) {
     const visible = ref();
     const visibleProp = computed(() => props.show);
-    const records = computed(() => props.records as TranslationRecord[]);
+    const model = computed(() => props.records as TranslationRecord[]);
 
     const originalValue = ref();
     const textValue = ref();
@@ -73,18 +73,6 @@ export default defineComponent({
         visible.value = false;
       };
       commit();
-      // if (multiEdit.value) {
-      //   confirm.require({
-      //     message: 'Are you sure you want to update all the records?',
-      //     // header: 'Multiple records are selected',
-      //     icon: 'pi pi-exclamation-triangle',
-      //     accept: () => {
-      //       commit();
-      //     },
-      //   });
-      // } else {
-      //   commit();
-      // }
     };
 
     watch(
@@ -95,7 +83,7 @@ export default defineComponent({
       { immediate: true },
     );
 
-    watch(records, value => {
+    watch(model, value => {
       if (value && value.length > 0) {
         const { original, text, notes } = value[0];
         textValue.value = text;
@@ -105,7 +93,7 @@ export default defineComponent({
         if (value.length > 1) {
           if (
             value.filter(x => x.original === originalValue.value).length !==
-            records.value.length
+            model.value.length
           ) {
             // Not the same values
             // then we need to reset the editable
@@ -124,6 +112,7 @@ export default defineComponent({
       originalValue,
       multiEdit,
       onSave,
+      model,
     };
   },
 });

@@ -17,6 +17,7 @@
       :records="records"
       :totalRecords="totalRecords"
       @save="save"
+      @translate="translate"
     />
   </div>
 </template>
@@ -24,7 +25,12 @@
 <script lang="ts">
 import { computed, defineComponent, ref, watch } from 'vue';
 import { useStore } from 'vuex';
-import { useHome, useInitialise, useTranslations } from '@/composables';
+import {
+  useBlockUi,
+  useHome,
+  useInitialise,
+  useTranslations,
+} from '@/composables';
 import { RootStore } from '@/store';
 
 import PackList from '@/components/PackList.vue';
@@ -47,8 +53,9 @@ export default defineComponent({
   },
   setup() {
     const { checkAndFetchSources } = useInitialise();
-    const { fetchRecords, saveRecords } = useTranslations();
+    const { fetchRecords, saveRecords, translateRecords } = useTranslations();
     const { fetchLocalPacks } = useHome();
+    const { block, unblock } = useBlockUi();
     const {
       state: { translations, home },
     } = useStore<RootStore>();
@@ -77,7 +84,33 @@ export default defineComponent({
     const totalRecords = computed(() => translations.total);
 
     const save = (records: TranslationRecord[]) => {
+      if (
+        records.length > 1 &&
+        !confirm(
+          'Your are updating multiple records with the same translation.\nAre you sure you want to do it?',
+        )
+      ) {
+        return;
+      }
       saveRecords(records, fetchArgs.value);
+    };
+
+    const translate = ({
+      provider,
+      records,
+    }: {
+      provider: string;
+      records: TranslationRecord[];
+    }) => {
+      if (
+        records.length === 0 &&
+        !confirm(
+          'You are about to translate ALL records\nAre you sure you want to do it?',
+        )
+      ) {
+        return;
+      }
+      translateRecords(provider, records, fetchArgs.value);
     };
 
     checkAndFetchSources();
@@ -102,6 +135,7 @@ export default defineComponent({
       filterModel,
       totalRecords,
       save,
+      translate,
     };
   },
 });
