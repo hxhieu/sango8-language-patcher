@@ -1,10 +1,5 @@
-import { existsSync, mkdir } from 'fs';
-import { promisify } from 'util';
-
 import { workDir, packDir } from './const';
-
-// TODO: Make helper for these
-const mkdirAsync = promisify(mkdir);
+import { existsSync, mkdirAsync } from './nodeApi';
 
 const checkCreateWorkDir = async (): Promise<void> => {
   if (!existsSync(workDir)) {

@@ -39,6 +39,22 @@ const translateRecords = (
   });
 };
 
+const revertRecords = (
+  dispatch: Dispatch,
+  records: TranslationRecord[],
+  args: FetchRecordArgs,
+) => {
+  // Need to clear cache to load updated records
+  args = {
+    ...args,
+    clearCache: true,
+  };
+  dispatch('translations/revertRecords', {
+    records,
+    args,
+  });
+};
+
 const useTranslations = () => {
   const { dispatch } = useStore();
   return {
@@ -50,6 +66,8 @@ const useTranslations = () => {
       records: TranslationRecord[],
       args: FetchRecordArgs,
     ) => translateRecords(dispatch, provider, records, args),
+    revertRecords: (records: TranslationRecord[], args: FetchRecordArgs) =>
+      revertRecords(dispatch, records, args),
   };
 };
 

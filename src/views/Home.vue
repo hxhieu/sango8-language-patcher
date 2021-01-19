@@ -19,6 +19,7 @@
       :totalRecords="totalRecords"
       @save="save"
       @translate="translate"
+      @revert="revert"
     />
   </div>
 </template>
@@ -47,6 +48,7 @@ import {
 } from '@/interfaces';
 import {
   EVENT_FETCH_RECORDS,
+  EVENT_REVERT_RECORDS,
   EVENT_TRANSLATE_RECORDS,
   EVENT_TRANSLATE_RECORDS_BATCH,
 } from '@/api/const';
@@ -63,7 +65,12 @@ export default defineComponent({
   setup() {
     const { ipcRenderer } = window._api;
     const { checkAndFetchSources } = useInitialise();
-    const { fetchRecords, saveRecords, translateRecords } = useTranslations();
+    const {
+      fetchRecords,
+      saveRecords,
+      translateRecords,
+      revertRecords,
+    } = useTranslations();
     const { fetchLocalPacks } = useHome();
     const { block, unblock } = useBlockUi();
     const {
@@ -123,11 +130,20 @@ export default defineComponent({
         return;
       }
       block('Translating the records');
-
-      ipcRenderer.once(EVENT_TRANSLATE_RECORDS, () => {
-        unblock();
-      });
       translateRecords(provider, records, fetchArgs.value);
+    };
+
+    const revert = ({ records }: { records: TranslationRecord[] }) => {
+      if (
+        records.length === 0 &&
+        !confirm(
+          'You are about to revert ALL records\nAre you sure you want to do it?',
+        )
+      ) {
+        return;
+      }
+      block('Reverting the records');
+      revertRecords(records, fetchArgs.value);
     };
 
     checkAndFetchSources();
@@ -166,6 +182,7 @@ export default defineComponent({
       save,
       translate,
       debug,
+      revert,
     };
   },
 });

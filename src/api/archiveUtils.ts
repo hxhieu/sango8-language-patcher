@@ -1,10 +1,9 @@
 import { join } from 'path';
 import { workDir, packExt } from './const';
-import { existsSync } from 'graceful-fs';
 import lz from 'lzutf8';
 import { PackArchive } from '@/interfaces';
 import { loadLocalPack } from './localPackUtils';
-import { readFileAsync, writeFileAsync } from './nodeApi';
+import { readFileAsync, writeFileAsync, existsSync } from './nodeApi';
 
 const writeArchive = async (locale: string, archive: PackArchive) => {
   const bytes: Buffer = lz.compress(Buffer.from(JSON.stringify(archive)));

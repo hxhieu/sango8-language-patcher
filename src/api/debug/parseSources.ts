@@ -1,16 +1,12 @@
 import { join } from 'path';
-import { existsSync, mkdirSync, readFile } from 'fs';
-import { promisify } from 'util';
 
 import { workDir, packDir } from '../const';
 import { PackArchive, SourceVariant, TranslationRecord } from '@/interfaces';
 import { createArchiveFromMemory } from '../archiveUtils';
 import { writeTranslation } from '../writeTranslation';
+import { existsSync, readFileAsync, mkdirAsync } from '../nodeApi';
 
 const sourceDir = join(workDir, 'sources');
-
-// TODO: Make helper for these
-const readFileAsync = promisify(readFile);
 
 // It starts from the 4th record
 // in the raw text file
@@ -54,7 +50,7 @@ const parseSources = async (
   }
   const translationDir = join(packDir, variant);
   if (!existsSync(translationDir)) {
-    mkdirSync(translationDir, { recursive: true });
+    await mkdirAsync(translationDir, { recursive: true });
   }
   const part = readSource(await readSourceRaw(variant, 'Part'));
   const full = readSource(await readSourceRaw(variant, 'Full'));

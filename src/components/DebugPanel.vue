@@ -21,7 +21,7 @@ export default defineComponent({
     };
 
     const createPatches = () => {
-      ipcRenderer.invoke(EVENT_CREATE_PATCHES, 'en', variant);
+      ipcRenderer.invoke(EVENT_CREATE_PATCHES, 'en.dev', variant);
     };
 
     return {

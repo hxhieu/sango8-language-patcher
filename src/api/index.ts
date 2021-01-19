@@ -10,6 +10,7 @@ import {
   EVENT_SAVE_RECORDS,
   EVENT_TRANSLATE_RECORDS,
   EVENT_CREATE_PATCHES,
+  EVENT_REVERT_RECORDS,
 } from './const';
 import { checkCreateWorkDir } from './dirUtils';
 import { parseSources } from './debug/parseSources';
@@ -26,6 +27,7 @@ import {
 import { saveRecords } from './saveRecords';
 import { translateRecords } from './translateRecords';
 import { createPatches } from './createPatches';
+import { revertRecords } from './revertRecords';
 
 const handleInvocations = () => {
   // Debug events
@@ -33,8 +35,8 @@ const handleInvocations = () => {
     ipcMain.handle(DEBUG_PARSE_SOURCES, async (_, variant: SourceVariant) => {
       try {
         await parseSources(variant);
-      } catch (e) {
-        log(e.message, 'error');
+      } catch (err) {
+        log(err.message, 'error');
       }
     });
   }
@@ -43,16 +45,16 @@ const handleInvocations = () => {
     try {
       const valid = checkSources();
       e.sender.send(EVENT_CHECK_SOURCES, valid);
-    } catch (e) {
-      log(e.message, 'error');
+    } catch (err) {
+      log(err.message, 'error');
     }
   });
 
   ipcMain.handle(EVENT_CHECK_CREATE_WORKING_DIR, async () => {
     try {
       await checkCreateWorkDir();
-    } catch (e) {
-      log(e.message, 'error');
+    } catch (err) {
+      log(err.message, 'error');
     }
   });
 
@@ -63,8 +65,8 @@ const handleInvocations = () => {
       try {
         await fetchPacks(e.sender, locale);
         e.sender.send(EVENT_FETCH_PACKS, true);
-      } catch (e) {
-        log(e.message, 'error');
+      } catch (err) {
+        log(err.message, 'error');
         e.sender.send(EVENT_FETCH_PACKS, false);
       }
     },
@@ -77,8 +79,9 @@ const handleInvocations = () => {
       try {
         const [records, total] = await fetchRecords(args);
         e.sender.send(EVENT_FETCH_RECORDS, records, total);
-      } catch (e) {
-        log(e.message, 'error');
+      } catch (err) {
+        log(err.message, 'error');
+        e.sender.send(EVENT_FETCH_RECORDS, [], 0);
       }
     },
   );
@@ -88,8 +91,8 @@ const handleInvocations = () => {
     try {
       const packs = await listPacks();
       e.sender.send(EVENT_LIST_LOCAL_PACKS, packs);
-    } catch (e) {
-      log(e.message, 'error');
+    } catch (err) {
+      log(err.message, 'error');
     }
   });
 
@@ -102,8 +105,8 @@ const handleInvocations = () => {
     ) => {
       try {
         await saveRecords(records, args);
-      } catch (e) {
-        log(e.message, 'error');
+      } catch (err) {
+        log(err.message, 'error');
       } finally {
         e.sender.send(EVENT_SAVE_RECORDS);
       }
@@ -120,8 +123,8 @@ const handleInvocations = () => {
     ) => {
       try {
         await translateRecords(e.sender, provider, records, args);
-      } catch (e) {
-        log(e.message, 'error');
+      } catch (err) {
+        log(err.message, 'error');
       } finally {
         e.sender.send(EVENT_TRANSLATE_RECORDS);
       }
@@ -133,10 +136,27 @@ const handleInvocations = () => {
     async (e: IpcMainInvokeEvent, locale: string, variant: SourceVariant) => {
       try {
         await createPatches(locale, variant);
-      } catch (e) {
-        log(e.message, 'error');
+      } catch (err) {
+        log(err.message, 'error');
       } finally {
         e.sender.send(EVENT_CREATE_PATCHES);
+      }
+    },
+  );
+
+  ipcMain.handle(
+    EVENT_REVERT_RECORDS,
+    async (
+      e: IpcMainInvokeEvent,
+      records: TranslationRecord[],
+      args: FetchRecordArgs,
+    ) => {
+      try {
+        await revertRecords(records, args);
+      } catch (err) {
+        log(err.message, 'error');
+      } finally {
+        e.sender.send(EVENT_REVERT_RECORDS);
       }
     },
   );

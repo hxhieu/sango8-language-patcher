@@ -1,5 +1,6 @@
 import {
   EVENT_FETCH_RECORDS,
+  EVENT_REVERT_RECORDS,
   EVENT_SAVE_RECORDS,
   EVENT_TRANSLATE_RECORDS,
 } from '@/api/const';
@@ -91,6 +92,24 @@ const actions: ActionTree<TranslationStore, RootStore> = {
       dispatch('fetchRecords', args);
     });
     ipcRenderer.invoke(EVENT_TRANSLATE_RECORDS, provider, records, args);
+  },
+
+  revertRecords: (
+    { dispatch },
+    {
+      records,
+      args,
+    }: {
+      args: FetchRecordArgs;
+      records: TranslationRecord[];
+    },
+  ) => {
+    const { ipcRenderer } = window._api;
+    ipcRenderer.once(EVENT_REVERT_RECORDS, () => {
+      // Refetch from the backend
+      dispatch('fetchRecords', args);
+    });
+    ipcRenderer.invoke(EVENT_REVERT_RECORDS, records, args);
   },
 };
 

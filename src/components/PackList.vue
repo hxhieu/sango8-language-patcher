@@ -32,6 +32,7 @@
           :options="sourcePacks"
           @change="change"
           v-model="model.source"
+          :disabled="true"
         />
       </div>
     </div>

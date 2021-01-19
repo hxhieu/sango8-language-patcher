@@ -1,13 +1,7 @@
 import { join } from 'path';
 import { packDir } from './const';
-import { existsSync, readFile, readdir } from 'graceful-fs';
-import { promisify } from 'util';
 import { PackArchive } from '@/interfaces';
-import { readdirAsync, statAsync } from './nodeApi';
-
-// TODO: Make helper for these
-const readFileAsync = promisify(readFile);
-const readDirAsync = promisify(readdir);
+import { readdirAsync, statAsync, existsSync, readFileAsync } from './nodeApi';
 
 const loadLocalPack = async (
   locale: string,
@@ -23,7 +17,7 @@ const loadLocalPack = async (
   };
 
   // Load part file
-  let dir = await readDirAsync(part);
+  let dir = await readdirAsync(part);
   let reads = [];
   for (const file of dir) {
     reads.push(readFileAsync(join(part, file), 'utf8'));
@@ -31,7 +25,7 @@ const loadLocalPack = async (
   archive.part = (await Promise.all(reads)).map(x => JSON.parse(x));
 
   // Load full
-  dir = await readDirAsync(full);
+  dir = await readdirAsync(full);
   reads = [];
   for (const file of dir) {
     reads.push(readFileAsync(join(full, file), 'utf8'));
@@ -43,7 +37,7 @@ const loadLocalPack = async (
 
 const listPacks = async () => {
   const result: string[] = [];
-  for (const dir of await readDirAsync(packDir)) {
+  for (const dir of await readdirAsync(packDir)) {
     const stat = await statAsync(join(packDir, dir));
     if (stat.isDirectory()) {
       result.push(dir);

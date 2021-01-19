@@ -83,7 +83,7 @@ export default defineComponent({
       type: Number,
     },
   },
-  emits: ['save', 'translate'],
+  emits: ['save', 'translate', 'revert'],
   setup(props, { emit }) {
     const model = computed<TranslationRecord>(
       () => (props.records as unknown) as TranslationRecord,
@@ -122,6 +122,12 @@ export default defineComponent({
       });
     };
 
+    const revertRecords = () => {
+      emit('revert', {
+        records: selection.value.map(x => ({ ...x })),
+      });
+    };
+
     const multiEdit = computed(
       () => selection.value && selection.value.length > 0,
     );
@@ -141,13 +147,22 @@ export default defineComponent({
 
       items.push(googleTranslate);
 
-      if (multiEdit.value) {
-        googleTranslate.items.push({
-          label: 'Selected',
-          icon: 'pi pi-cog',
-          command: () => translateRecords('google'),
-        });
+      const revert = {
+        label: 'Revert to source',
+        items: [
+          {
+            label: 'All',
+            icon: 'pi pi-times',
+            command: () => revertRecords(),
+          },
+        ],
+      };
 
+      items.push(revert);
+
+      if (multiEdit.value) {
+        googleTranslate.items[0].label = 'Selected';
+        revert.items[0].label = 'Selected';
         items.push({
           label: 'Manual',
           items: [

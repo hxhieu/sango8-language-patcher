@@ -10,6 +10,7 @@ import { useBlockUi } from '@/composables';
 import { HOME_SOURCE_PACKS } from '@/store/types';
 
 const checkAndFetchSources = () => {
+  // TODO: Move block/unblock this to main thread?
   const { block, unblock } = useBlockUi();
   const { commit } = useStore();
   const { ipcRenderer } = window._api;
