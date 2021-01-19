@@ -111,6 +111,7 @@ export default defineComponent({
       ) {
         return;
       }
+      block(`Saving the record${records.length > 1 ? 's' : ''}`);
       saveRecords(records, fetchArgs.value);
     };
 

@@ -39,10 +39,13 @@ const createPatches = async (
     await mkdirAsync(patchDir);
   }
 
+  const sourceDir = join(workDir, 'sources');
+
+  // TODO: Combine code
   // Full
   const fullSourceFile = getSourceFileName(variant, 'Full');
   const fullSource: any[] = JSON.parse(
-    await readFileAsync(join(workDir, fullSourceFile), 'utf8'),
+    await readFileAsync(join(sourceDir, fullSourceFile), 'utf8'),
   );
   const [full] = await fetchRecords({
     local: locale,
@@ -62,7 +65,7 @@ const createPatches = async (
   // Part
   const partSourceFile = getSourceFileName(variant, 'Part');
   const partSource: any[] = JSON.parse(
-    await readFileAsync(join(workDir, partSourceFile), 'utf8'),
+    await readFileAsync(join(sourceDir, partSourceFile), 'utf8'),
   );
   const [part] = await fetchRecords({
     local: locale,
