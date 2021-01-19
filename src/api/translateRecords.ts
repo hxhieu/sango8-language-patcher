@@ -58,7 +58,12 @@ const translateRecords = async (
     const currentBatchRecords: TranslationRecord[] = [];
 
     translated.split(lineDelimiter).forEach(line => {
-      const [id, text] = line.split(':');
+      const frags = line.split(':');
+      const id = frags[0];
+      // Remove the 1st elem = the id
+      frags.shift();
+      // Join the rest
+      const text = frags.join(': ');
       const record = records.find(x => x.id === parseInt(id, 10));
       if (record) {
         currentBatchRecords.push({
