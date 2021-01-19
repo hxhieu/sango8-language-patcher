@@ -7,44 +7,80 @@ import {
 
 import { join } from 'path';
 import { workDir } from './const';
-import {
-  PackArchive,
-  PatchHeader,
-  SourceVariant,
-  TranslationRecord,
-} from '@/interfaces';
-import { loadLocalPack } from './localPackUtils';
+import { SourceVariant, TranslationRecord } from '@/interfaces';
+import { normaliseTranslations } from './nomaliseTranslation';
+import { fetchRecords } from './fetchRecords';
+import { log } from './logger';
 
-const getSourceFileName = (variant: SourceVariant, part = false) =>
-  `Strings_${part ? 'Part' : 'Full'}.${variant}.txt`;
+const getSourceFileName = (variant: SourceVariant, fileType: 'Full' | 'Part') =>
+  `Strings_${fileType}.${variant}.txt`;
 
-const createPatches = async (locale: string, variant: SourceVariant) => {
-  const fullFile = getSourceFileName(variant, false);
+const patch = (source: any[], records: TranslationRecord[]) => {
+  const translations = normaliseTranslations(records);
+  for (const record of source) {
+    const id = parseInt(record[0]);
+    // Skip irrelevant lines
+    if (!Array.isArray(record) || isNaN(id) || !translations[id]) {
+      continue;
+    }
+    // Apply translation
+    record[1] = translations[id];
+  }
+};
+
+const createPatches = async (
+  locale: string,
+  variant: SourceVariant,
+  from = 0,
+  count?: number,
+) => {
   const patchDir = join(workDir, 'patches');
   if (!existsSync(patchDir)) {
     await mkdirAsync(patchDir);
   }
 
+  // Full
+  const fullSourceFile = getSourceFileName(variant, 'Full');
   const fullSource: any[] = JSON.parse(
-    await readFileAsync(join(workDir, fullFile), 'utf8'),
+    await readFileAsync(join(workDir, fullSourceFile), 'utf8'),
   );
-  const { full, part } = (await loadLocalPack(locale)) as PackArchive;
-
-  // // Full patch
-  // const fullTranslate = normaliseTranslations(full);
-  // for (const record of fullSource) {
-  //   // Skip irrelevant lines
-  //   if (!Array.isArray(record) || isNaN(parseInt(record[0]))) {
-  //     continue;
-  //   }
-  //   record[1] = fullTranslate[record[0]];
-  // }
-
+  const [full] = await fetchRecords({
+    local: locale,
+    source: variant,
+    pageIndex: from,
+    pageSize: count || Number.MAX_SAFE_INTEGER,
+    exact: false,
+    fileType: 'full',
+  });
+  patch(fullSource, full);
   await writeFileAsync(
-    join(patchDir, fullFile),
-    JSON.stringify(fullSource),
+    join(patchDir, fullSourceFile),
+    JSON.stringify(fullSource, null, 2),
     'utf8',
   );
+
+  // Part
+  const partSourceFile = getSourceFileName(variant, 'Part');
+  const partSource: any[] = JSON.parse(
+    await readFileAsync(join(workDir, partSourceFile), 'utf8'),
+  );
+  const [part] = await fetchRecords({
+    local: locale,
+    source: variant,
+    pageIndex: from,
+    pageSize: count || Number.MAX_SAFE_INTEGER,
+    exact: false,
+    fileType: 'part',
+  });
+  patch(partSource, part);
+  await writeFileAsync(
+    join(patchDir, partSourceFile),
+    JSON.stringify(partSource, null, 2),
+    'utf8',
+  );
+
+  log(`Patches done!`);
+
   // const { full: headerFull, part: headerPart } = JSON.parse(
   //   await readFileAsync(join(workDir, 'headers.json'), { encoding: 'utf8' }),
   // ) as PatchHeader;

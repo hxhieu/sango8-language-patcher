@@ -133,9 +133,15 @@ const handleInvocations = () => {
 
   ipcMain.handle(
     EVENT_CREATE_PATCHES,
-    async (e: IpcMainInvokeEvent, locale: string, variant: SourceVariant) => {
+    async (
+      e: IpcMainInvokeEvent,
+      locale: string,
+      variant: SourceVariant,
+      from?: number,
+      count?: number,
+    ) => {
       try {
-        await createPatches(locale, variant);
+        await createPatches(locale, variant, from, count);
       } catch (err) {
         log(err.message, 'error');
       } finally {
