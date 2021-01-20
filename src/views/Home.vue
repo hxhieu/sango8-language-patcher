@@ -20,6 +20,7 @@
       @save="save"
       @translate="translate"
       @revert="revert"
+      @writeAll="writeAll"
     />
   </div>
 </template>
@@ -112,7 +113,12 @@ export default defineComponent({
         return;
       }
       block(`Saving the record${records.length > 1 ? 's' : ''}`);
-      saveRecords(records, fetchArgs.value, true);
+      saveRecords(fetchArgs.value, records);
+    };
+
+    const writeAll = () => {
+      block(`Writing the records`);
+      saveRecords(fetchArgs.value);
     };
 
     const translate = ({
@@ -184,6 +190,7 @@ export default defineComponent({
       translate,
       debug,
       revert,
+      writeAll,
     };
   },
 });

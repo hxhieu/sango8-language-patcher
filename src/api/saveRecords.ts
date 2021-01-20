@@ -1,16 +1,21 @@
 import { FetchRecordArgs, TranslationRecord } from '@/interfaces';
 import { writeTranslation } from './writeTranslation';
-import { set } from './translationCache';
+import { clearPending, getRecords, set } from './translationCache';
 
 const saveRecords = async (
-  records: TranslationRecord[],
   args: FetchRecordArgs,
+  records?: TranslationRecord[],
 ) => {
   const { local, fileType, clearCache } = args;
-  if (clearCache) {
-    return writeTranslation(local as string, records, fileType === 'part');
+  const localValue = local as string;
+  const fileTypeValue = fileType as string;
+  if (!clearCache && records) {
+    return set(localValue, fileTypeValue, records);
   }
-  return set(local as string, fileType as string, records);
+  // Write to the files = write the cache records
+  records = getRecords(localValue, fileTypeValue);
+  await writeTranslation(local as string, records, fileType === 'part');
+  clearPending();
 };
 
 export { saveRecords };

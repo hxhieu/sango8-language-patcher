@@ -7,9 +7,9 @@ const fetchRecords = (dispatch: Dispatch, args: FetchRecordArgs) => {
 
 const saveRecords = (
   dispatch: Dispatch,
-  records: TranslationRecord[],
   args: FetchRecordArgs,
-  memSave: boolean,
+  records?: TranslationRecord[],
+  memSave = true,
 ) => {
   // Need to clear cache to load updated records
   args = {
@@ -17,8 +17,8 @@ const saveRecords = (
     clearCache: !memSave,
   };
   dispatch('translations/saveRecords', {
-    records,
     args,
+    records,
   });
 };
 
@@ -61,10 +61,10 @@ const useTranslations = () => {
   return {
     fetchRecords: (args: FetchRecordArgs) => fetchRecords(dispatch, args),
     saveRecords: (
-      records: TranslationRecord[],
       args: FetchRecordArgs,
-      memSave: boolean,
-    ) => saveRecords(dispatch, records, args, memSave),
+      records?: TranslationRecord[],
+      memSave = true,
+    ) => saveRecords(dispatch, args, records, memSave),
     translateRecords: (
       provider: string,
       records: TranslationRecord[],
