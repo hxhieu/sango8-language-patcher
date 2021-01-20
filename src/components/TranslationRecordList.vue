@@ -11,6 +11,9 @@
       <template #header>
         <div class="table-header">
           Showing {{ model.length }} of total {{ total }} records
+          <Button class="p-button-help" @click="writeAll"
+            >Write all changes</Button
+          >
         </div>
       </template>
       <Column selectionMode="multiple" headerStyle="width: 38px"></Column>
@@ -83,7 +86,7 @@ export default defineComponent({
       type: Number,
     },
   },
-  emits: ['save', 'translate', 'revert'],
+  emits: ['save', 'translate', 'revert', 'writeAll'],
   setup(props, { emit }) {
     const model = computed<TranslationRecord>(
       () => (props.records as unknown) as TranslationRecord,
@@ -126,6 +129,10 @@ export default defineComponent({
       emit('revert', {
         records: selection.value.map(x => ({ ...x })),
       });
+    };
+
+    const writeAll = () => {
+      emit('writeAll');
     };
 
     const multiEdit = computed(
@@ -200,6 +207,7 @@ export default defineComponent({
       showEditForm,
       saveRecords,
       multiEdit,
+      writeAll,
     };
   },
 });
@@ -213,6 +221,9 @@ export default defineComponent({
 
 .table-header {
   padding: 0 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 #bulk-menu {

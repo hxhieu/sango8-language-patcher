@@ -77,8 +77,8 @@ const handleInvocations = () => {
     EVENT_FETCH_RECORDS,
     async (e: IpcMainInvokeEvent, args: FetchRecordArgs) => {
       try {
-        const [records, total] = await fetchRecords(args);
-        e.sender.send(EVENT_FETCH_RECORDS, records, total);
+        const [records, total, hasPending] = await fetchRecords(args);
+        e.sender.send(EVENT_FETCH_RECORDS, records, total, hasPending);
       } catch (err) {
         log(err.message, 'error');
         e.sender.send(EVENT_FETCH_RECORDS, [], 0);
@@ -100,11 +100,11 @@ const handleInvocations = () => {
     EVENT_SAVE_RECORDS,
     async (
       e: IpcMainInvokeEvent,
-      records: TranslationRecord[],
       args: FetchRecordArgs,
+      records?: TranslationRecord[],
     ) => {
       try {
-        await saveRecords(records, args);
+        await saveRecords(args, records);
       } catch (err) {
         log(err.message, 'error');
       } finally {

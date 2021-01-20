@@ -6,7 +6,7 @@ import * as cache from './translationCache';
 
 const fetchRecords = async (
   args: FetchRecordArgs,
-): Promise<[TranslationRecord[], number]> => {
+): Promise<[TranslationRecord[], number, boolean]> => {
   const {
     clearCache,
     local,
@@ -35,10 +35,10 @@ const fetchRecords = async (
         'Source packs are missing, please re-download them from the menu',
       );
     }
-    cache.set(sourceLocale, fileTypeValue, sourcePack[fileTypeValue]);
+    cache.set(sourceLocale, fileTypeValue, sourcePack[fileTypeValue], false);
 
     const localPack = await loadLocalPack(localLocale);
-    cache.set(localLocale, fileTypeValue, localPack[fileTypeValue]);
+    cache.set(localLocale, fileTypeValue, localPack[fileTypeValue], false);
 
     localeCacheValue = cache.get(localLocale, fileTypeValue);
     sourceCacheValue = cache.get(sourceLocale, fileTypeValue);
@@ -73,7 +73,7 @@ const fetchRecords = async (
   result = result.sort((a, b) => (a.id > b.id ? 1 : -1));
   // paging
   result = result.splice(pageIndex * pageSize, pageSize);
-  return [result, total];
+  return [result, total, cache.hasPending()];
 };
 
 export { fetchRecords };
