@@ -24,7 +24,7 @@
         @click="visible = false"
         class="p-button-text"
       />
-      <Button label="Save" icon="pi pi-check" @click="onSave" />
+      <Button label="Append Changes" icon="pi pi-check" @click="onSave" />
     </template>
   </Dialog>
 </template>

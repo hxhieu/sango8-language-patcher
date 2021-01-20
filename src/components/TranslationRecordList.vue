@@ -11,6 +11,7 @@
       <template #header>
         <div class="table-header">
           Showing {{ model.length }} of total {{ total }} records
+          <Button class="p-button-help">Write all changes</Button>
         </div>
       </template>
       <Column selectionMode="multiple" headerStyle="width: 38px"></Column>
@@ -213,6 +214,9 @@ export default defineComponent({
 
 .table-header {
   padding: 0 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 #bulk-menu {

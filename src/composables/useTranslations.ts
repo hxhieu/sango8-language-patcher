@@ -9,11 +9,12 @@ const saveRecords = (
   dispatch: Dispatch,
   records: TranslationRecord[],
   args: FetchRecordArgs,
+  memSave: boolean,
 ) => {
   // Need to clear cache to load updated records
   args = {
     ...args,
-    clearCache: true,
+    clearCache: !memSave,
   };
   dispatch('translations/saveRecords', {
     records,
@@ -59,8 +60,11 @@ const useTranslations = () => {
   const { dispatch } = useStore();
   return {
     fetchRecords: (args: FetchRecordArgs) => fetchRecords(dispatch, args),
-    saveRecords: (records: TranslationRecord[], args: FetchRecordArgs) =>
-      saveRecords(dispatch, records, args),
+    saveRecords: (
+      records: TranslationRecord[],
+      args: FetchRecordArgs,
+      memSave: boolean,
+    ) => saveRecords(dispatch, records, args, memSave),
     translateRecords: (
       provider: string,
       records: TranslationRecord[],
