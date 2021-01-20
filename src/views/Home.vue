@@ -212,6 +212,6 @@ export default defineComponent({
 .translation-records-list {
   flex: 1;
   overflow: hidden;
-  padding-bottom: 76px;
+  padding-bottom: 96px;
 }
 </style>
