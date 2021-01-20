@@ -1,10 +1,8 @@
-import { TranslationRecord, PackArchive, FetchRecordArgs } from '@/interfaces';
+import { TranslationRecord, FetchRecordArgs } from '@/interfaces';
 import { readArchive } from './archiveUtils';
 import { loadLocalPack } from './localPackUtils';
 import { compare } from './stringUtils';
-
-// TODO: separate cache module, lru-cache?
-let cache: { [key: string]: PackArchive } = {};
+import * as cache from './translationCache';
 
 const fetchRecords = async (
   args: FetchRecordArgs,
@@ -26,26 +24,34 @@ const fetchRecords = async (
 
   let result: TranslationRecord[] = [];
 
+  let localeCacheValue = cache.get(localLocale, fileTypeValue);
+  let sourceCacheValue = cache.get(sourceLocale, fileTypeValue);
+
   // Reload the data if the cache is invalid
-  if (clearCache || !cache[localLocale] || !cache[sourceLocale]) {
+  if (clearCache || !localeCacheValue || !sourceCacheValue) {
     const sourcePack = await readArchive(sourceLocale);
     if (!sourcePack) {
       throw new Error(
         'Source packs are missing, please re-download them from the menu',
       );
     }
-    cache[sourceLocale] = sourcePack;
-    cache[localLocale] = await loadLocalPack(localLocale);
+    cache.set(sourceLocale, fileTypeValue, sourcePack[fileTypeValue]);
+
+    const localPack = await loadLocalPack(localLocale);
+    cache.set(localLocale, fileTypeValue, localPack[fileTypeValue]);
+
+    localeCacheValue = cache.get(localLocale, fileTypeValue);
+    sourceCacheValue = cache.get(sourceLocale, fileTypeValue);
   }
 
   // Combine sources with translations
   const combined: TranslationRecord[] = [];
-  for (const source of cache[sourceLocale][fileTypeValue]) {
-    const translated = cache[localLocale][fileTypeValue].find(
-      x => x.id === source.id,
-    );
-    combined.push(translated || source);
-  }
+  Object.keys(sourceCacheValue).forEach(key => {
+    const id = parseInt(key, 10);
+    const source = sourceCacheValue[id];
+    const trans = localeCacheValue[id];
+    combined.push(trans || source);
+  });
 
   // filter
   for (var record of combined) {
