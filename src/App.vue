@@ -64,18 +64,18 @@ export default defineComponent({
     });
 
     // Theme switching
-    watch(
-      theme,
-      value => {
-        // TODO: Not working if swap back to 'dark'
-        if (value === 'dark') {
-          require('primevue/resources/themes/arya-blue/theme.css');
-        } else if (value === 'light') {
-          require('primevue/resources/themes/fluent-light/theme.css');
-        }
-      },
-      { immediate: true },
-    );
+    // watch(
+    //   theme,
+    //   value => {
+    //     // TODO: Not working if swap back to 'dark'
+    //     if (value === 'dark') {
+    //       require('primevue/resources/themes/arya-blue/theme.css');
+    //     } else if (value === 'light') {
+    //       require('primevue/resources/themes/fluent-light/theme.css');
+    //     }
+    //   },
+    //   { immediate: true },
+    // );
 
     const themeChanged = (theme: Theme) => {
       setTheme(theme);

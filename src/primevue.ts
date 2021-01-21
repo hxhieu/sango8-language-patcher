@@ -1,6 +1,6 @@
 import { App } from 'vue';
 
-// import 'primevue/resources/themes/arya-orange/theme.css';
+import 'primevue/resources/themes/arya-orange/theme.css';
 // import 'primevue/resources/themes/arya-blue/theme.css';
 // import 'primevue/resources/themes/fluent-light/theme.css';
 // import 'primevue/resources/themes/nova/theme.css';
