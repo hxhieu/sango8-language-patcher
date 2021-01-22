@@ -49,8 +49,6 @@ import {
 } from '@/interfaces';
 import {
   EVENT_FETCH_RECORDS,
-  EVENT_REVERT_RECORDS,
-  EVENT_TRANSLATE_RECORDS,
   EVENT_TRANSLATE_RECORDS_BATCH,
 } from '@/api/const';
 import { IpcRendererEvent } from 'electron';

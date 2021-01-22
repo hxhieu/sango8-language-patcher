@@ -1,3 +1,4 @@
+import isChinese from 'is-chinese';
 import { TranslationRecord, FetchRecordArgs } from '@/interfaces';
 import { readArchive } from './archiveUtils';
 import { loadLocalPack } from './localPackUtils';
@@ -56,15 +57,25 @@ const fetchRecords = async (
   // filter
   for (var record of combined) {
     if (search) {
-      if (
-        (record.text && compare(record.text, search, exact)) ||
-        (record.original && compare(record.original, search, exact))
-      ) {
-        result.push(record);
+      // Search keyword
+      switch (search) {
+        case '{{ MISSING }}':
+          if (!record.text || isChinese(record.text)) {
+            result.push(record);
+          }
+          continue;
+        default:
+          if (
+            (record.text && compare(record.text, search, exact)) ||
+            (record.original && compare(record.original, search, exact))
+          ) {
+            result.push(record);
+          }
+          continue;
       }
-    } else {
-      result.push(record);
     }
+
+    result.push(record);
   }
 
   const total = result.length;
