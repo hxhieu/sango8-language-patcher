@@ -9,8 +9,8 @@ const loadLocalPack = async (
 ): Promise<PackArchive> => {
   const part = join(packDir, locale, 'part');
   const full = join(packDir, locale, 'full');
-  if (!existsSync(part) && !existsSync(full)) {
-    throw new Error(`Need either 'part' or 'full' for locale '${locale}'`);
+  if (!existsSync(part) || !existsSync(full)) {
+    throw new Error(`Need both 'part' or 'full' for locale '${locale}'`);
   }
   const archive: PackArchive = {
     version,
@@ -19,24 +19,20 @@ const loadLocalPack = async (
   let reads: any[];
 
   // Load part file
-  if (existsSync(part)) {
-    dir = await readdirAsync(part);
-    reads = [];
-    for (const file of dir) {
-      reads.push(readFileAsync(join(part, file), 'utf8'));
-    }
-    archive.part = (await Promise.all(reads)).map(x => JSON.parse(x));
+  dir = await readdirAsync(part);
+  reads = [];
+  for (const file of dir) {
+    reads.push(readFileAsync(join(part, file), 'utf8'));
   }
+  archive.part = (await Promise.all(reads)).map(x => JSON.parse(x));
 
   // Load full
-  if (existsSync(full)) {
-    dir = await readdirAsync(full);
-    reads = [];
-    for (const file of dir) {
-      reads.push(readFileAsync(join(full, file), 'utf8'));
-    }
-    archive.full = (await Promise.all(reads)).map(x => JSON.parse(x));
+  dir = await readdirAsync(full);
+  reads = [];
+  for (const file of dir) {
+    reads.push(readFileAsync(join(full, file), 'utf8'));
   }
+  archive.full = (await Promise.all(reads)).map(x => JSON.parse(x));
 
   return archive;
 };

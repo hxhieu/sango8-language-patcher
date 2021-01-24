@@ -28,12 +28,12 @@ const extractPatch = async () => {
         for (var source of sources) {
           source.text = records[source.id];
         }
-        await writeTranslation(
-          `${variant}.extracted`,
-          sources,
-          fileType !== 'full',
-          true,
-        );
+        // Just need to replicate the process
+        const part = fileType === 'part';
+        // Real records
+        await writeTranslation(`${variant}.extracted`, sources, part);
+        // Fake records for the counter-part
+        await writeTranslation(`${variant}.extracted`, [], !part);
       }
     } catch (err) {
       log(err.message, 'error');

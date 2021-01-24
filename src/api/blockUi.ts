@@ -1,5 +1,5 @@
 import { BrowserWindow } from 'electron';
-import { EVENT_BLOCK_UI } from './const';
+import { EVENT_BLOCK_UI, EVENT_UNBLOCK_UI } from './const';
 
 const blockUi = (message: string) => {
   const win = BrowserWindow.getFocusedWindow();
@@ -11,8 +11,7 @@ const blockUi = (message: string) => {
 const unblockUi = () => {
   const win = BrowserWindow.getFocusedWindow();
   if (win) {
-    console.log('aaa');
-    win.webContents.send(EVENT_BLOCK_UI);
+    win.webContents.send(EVENT_UNBLOCK_UI);
   }
 };
 
