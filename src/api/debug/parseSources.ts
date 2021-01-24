@@ -44,6 +44,7 @@ const readSource = (source?: string): TranslationRecord[] => {
 const parseSources = async (
   variant: SourceVariant,
   version: any = 'devel',
+  overridePack?: string,
 ): Promise<void> => {
   if (!existsSync(sourceDir)) {
     return;
@@ -55,8 +56,9 @@ const parseSources = async (
   const part = readSource(await readSourceRaw(variant, 'Part'));
   const full = readSource(await readSourceRaw(variant, 'Full'));
 
-  await writeTranslation(variant, part, true, true);
-  await writeTranslation(variant, full, false, true);
+  const writePath = overridePack || variant;
+  await writeTranslation(writePath, part, true, true);
+  await writeTranslation(writePath, full, false, true);
 
   const archive: PackArchive = {
     version,
@@ -65,7 +67,7 @@ const parseSources = async (
   };
 
   // Pack it
-  await createArchiveFromMemory(variant, archive);
+  await createArchiveFromMemory(writePath, archive);
 };
 
-export { parseSources };
+export { parseSources, readSource };

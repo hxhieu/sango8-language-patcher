@@ -1,12 +1,14 @@
 'use strict';
 
 import { join } from 'path';
-import { app, protocol, BrowserWindow } from 'electron';
+import { app, protocol, BrowserWindow, Menu } from 'electron';
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib';
 import installExtension from 'electron-devtools-installer';
 import { handleInvocations } from './api';
+import TopMenu from './api/ui/menu';
 
 const isDevelopment = process.env.NODE_ENV !== 'production';
+Menu.setApplicationMenu(null);
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
@@ -68,6 +70,7 @@ app.on('ready', async () => {
   // This will handle all events invoked by the renderer process
   handleInvocations();
   await createWindow();
+  Menu.setApplicationMenu(TopMenu);
 });
 
 // Exit cleanly on request from parent process in development mode.

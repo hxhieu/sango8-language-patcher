@@ -23,12 +23,12 @@ import BlockUI from 'primevue/blockui';
 import ProgressSpinner from 'primevue/progressspinner';
 
 import { LogMessage } from '@/interfaces';
-import { EVENT_LOGGER } from './api/const';
+import { EVENT_BLOCK_UI, EVENT_LOGGER, EVENT_UNBLOCK_UI } from './api/const';
 import { RootStore } from './store';
 
 import Footer from './components/Footer.vue';
 import { Theme } from './store/modules/shell';
-import { useShell } from './composables';
+import { useShell, useBlockUi } from './composables';
 
 export default defineComponent({
   name: 'App',
@@ -42,6 +42,8 @@ export default defineComponent({
   setup() {
     const { ipcRenderer } = window._api;
     const toast = useToast();
+    const { block, unblock } = useBlockUi();
+
     const {
       state: { shell },
     } = useStore<RootStore>();
@@ -61,6 +63,14 @@ export default defineComponent({
         detail,
         summary: severity.toLocaleUpperCase(),
       });
+    });
+
+    // Blocking from main process
+    ipcRenderer.on(EVENT_BLOCK_UI, (_: IpcRendererEvent, message: string) => {
+      block(message);
+    });
+    ipcRenderer.on(EVENT_UNBLOCK_UI, () => {
+      unblock();
     });
 
     // Theme switching
