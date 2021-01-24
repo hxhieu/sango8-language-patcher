@@ -126,12 +126,9 @@ export default defineComponent({
     textarea.disabled {
       color: var(--text-color);
       background: var(--surface-d);
-      &:focus,
-      &:hover {
-        outline: none;
-        border-color: var(--surface-d);
-        box-shadow: 0;
-      }
+      border: 0;
+      box-shadow: none;
+      outline: none;
     }
   }
 }
