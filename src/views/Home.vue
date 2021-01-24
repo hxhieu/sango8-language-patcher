@@ -1,6 +1,5 @@
 <template>
   <div class="home">
-    <DebugPanel v-if="debug" />
     <PackList
       :locals="localPacks"
       :sources="sourcePacks"
@@ -39,7 +38,6 @@ import { RootStore } from '@/store';
 import PackList from '@/components/PackList.vue';
 import RecordFilter from '@/components/RecordFilter.vue';
 import TranslationRecordList from '@/components/TranslationRecordList.vue';
-import DebugPanel from '@/components/DebugPanel.vue';
 
 import {
   FetchRecordArgs,
@@ -59,7 +57,6 @@ export default defineComponent({
     PackList,
     RecordFilter,
     TranslationRecordList,
-    DebugPanel,
   },
   setup() {
     const { ipcRenderer } = window._api;

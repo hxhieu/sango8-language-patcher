@@ -10,7 +10,11 @@ import { workDir } from './const';
 import { SourceVariant, TranslationRecord } from '@/interfaces';
 import { normaliseTranslations } from './nomaliseTranslation';
 import { fetchRecords } from './fetchRecords';
-import { log } from './logger';
+
+let patchDir: string;
+
+const setPatchDir = (targetDir: string) => (patchDir = targetDir);
+const getPatchDir = () => patchDir;
 
 const getSourceFileName = (variant: SourceVariant, fileType: 'Full' | 'Part') =>
   `Strings_${fileType}.${variant}.txt`;
@@ -34,9 +38,9 @@ const createPatches = async (
   from = 0,
   count?: number,
 ) => {
-  const patchDir = join(workDir, 'patches');
-  if (!existsSync(patchDir)) {
-    await mkdirAsync(patchDir);
+  const dir = patchDir || join(workDir, 'patches');
+  if (!existsSync(dir)) {
+    await mkdirAsync(dir);
   }
 
   const sourceDir = join(workDir, 'sources');
@@ -81,39 +85,6 @@ const createPatches = async (
     JSON.stringify(partSource, null, 2),
     'utf8',
   );
-
-  log(`Patches done!`);
-
-  // const { full: headerFull, part: headerPart } = JSON.parse(
-  //   await readFileAsync(join(workDir, 'headers.json'), { encoding: 'utf8' }),
-  // ) as PatchHeader;
-  // const { full, part } = (await loadLocalPack(locale)) as PackArchive;
-
-  // let fullText = `[ 25693,
-  // 0,
-  // 0,
-  // ["id","text"],
-  // `;
-
-  // full
-  //   .sort((x, y) => (x.id > y.id ? 1 : -1))
-  //   .forEach(x => {
-  //     const { id, text, original } = x;
-  //     const patch = (text || original || '').trim();
-  //     fullText += `  [${id}:"${patch}"],\n`;
-  //   });
-  // fullText += `]`;
-  // await writeFileAsync(join(workDir, `Strings_Full.${variant}.txt`), fullText);
-
-  // part.forEach(x => {
-  //   const { id, text, original } = x;
-  //   const patch = (text || original || '').trim();
-  //   headerPart.push([id, patch]);
-  // });
-  // await writeFileAsync(
-  //   join(workDir, `Strings_Part.${variant}.txt`),
-  //   JSON.stringify(headerPart, null, 2),
-  // );
 };
 
-export { createPatches };
+export { createPatches, setPatchDir, getPatchDir };

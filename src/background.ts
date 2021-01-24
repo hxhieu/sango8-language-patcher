@@ -5,7 +5,7 @@ import { app, protocol, BrowserWindow, Menu } from 'electron';
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib';
 import installExtension from 'electron-devtools-installer';
 import { handleInvocations } from './api';
-import TopMenu from './api/ui/menu';
+import buildMenu from './api/menu';
 
 const isDevelopment = process.env.NODE_ENV !== 'production';
 Menu.setApplicationMenu(null);
@@ -70,7 +70,7 @@ app.on('ready', async () => {
   // This will handle all events invoked by the renderer process
   handleInvocations();
   await createWindow();
-  Menu.setApplicationMenu(TopMenu);
+  Menu.setApplicationMenu(await buildMenu());
 });
 
 // Exit cleanly on request from parent process in development mode.
