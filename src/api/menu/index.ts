@@ -1,7 +1,7 @@
 import { app, BrowserWindow, Menu } from 'electron';
 import { MenuItemConstructorOptions } from 'electron/main';
 import { buildCreatePatchSubmenu } from './buildCreatePatchSubMenu';
-import { extractPatch } from './extractPatch';
+import { buildExtractPatchSubmenu } from './buildExtractPatchSubMenu';
 import { setPatchLocation } from './setPatchLocation';
 import { sourceArchive } from './sourceArchive';
 
@@ -54,8 +54,8 @@ const buildMenu = async () => {
           type: 'separator',
         },
         {
-          label: 'Extract patched file',
-          click: extractPatch,
+          label: 'Extract patch files',
+          submenu: await buildExtractPatchSubmenu(),
         },
       ],
     },

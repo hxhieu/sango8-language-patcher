@@ -5,24 +5,22 @@ import { log } from '@/api/logger';
 import { SourceVariant } from '@/interfaces';
 import { MenuItemConstructorOptions } from 'electron';
 
-const createPatch = async (variant: SourceVariant, locale: string) => {
-  try {
-    blockUi('Creating patches');
-    await createPatches(locale, variant);
-  } catch (err) {
-    log(err.message, 'error');
-  } finally {
-    unblockUi();
-  }
-};
-
 const buildCreatePatchSubmenu = async (
   variant: SourceVariant,
 ): Promise<MenuItemConstructorOptions[]> => {
   const packs = await listPacks();
   return packs.map(x => ({
     label: `From ${x}`,
-    click: () => createPatch(variant, x),
+    click: async () => {
+      try {
+        blockUi('Creating patches');
+        await createPatches(x, variant);
+      } catch (err) {
+        log(err.message, 'error');
+      } finally {
+        unblockUi();
+      }
+    },
   }));
 };
 
