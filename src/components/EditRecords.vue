@@ -7,15 +7,17 @@
   >
     <div class="text-edit">
       <label>Original</label>
-      <Textarea rows="5" cols="100" readonly v-model="originalValue" />
+      <Textarea
+        rows="5"
+        cols="100"
+        readonly
+        v-model="originalValue"
+        class="disabled"
+      />
     </div>
     <div class="text-edit">
       <label>Translation</label>
       <Textarea rows="5" cols="100" v-model="textValue" />
-    </div>
-    <div class="text-edit">
-      <label>Notes</label>
-      <Textarea rows="1" cols="100" v-model="notesValue" />
     </div>
     <template #footer>
       <Button
@@ -59,7 +61,6 @@ export default defineComponent({
 
     const originalValue = ref();
     const textValue = ref();
-    const notesValue = ref();
 
     const multiEdit = computed(() => props.records && props.records.length > 1);
 
@@ -68,7 +69,6 @@ export default defineComponent({
         emit('save', {
           text: textValue.value,
           original: originalValue.value,
-          notes: notesValue.value,
         } as TranslationRecord);
         visible.value = false;
       };
@@ -85,10 +85,9 @@ export default defineComponent({
 
     watch(model, value => {
       if (value && value.length > 0) {
-        const { original, text, notes } = value[0];
+        const { original, text } = value[0];
         textValue.value = text;
         originalValue.value = original;
-        notesValue.value = notes;
         // Handle multiple values
         if (value.length > 1) {
           if (
@@ -99,7 +98,6 @@ export default defineComponent({
             // then we need to reset the editable
             originalValue.value = '<MULTIPLE VALUES>';
             textValue.value = '';
-            notesValue.value = '';
           }
         }
       }
@@ -107,7 +105,6 @@ export default defineComponent({
 
     return {
       visible,
-      notesValue,
       textValue,
       originalValue,
       multiEdit,
@@ -125,6 +122,16 @@ export default defineComponent({
     flex-direction: column;
     label {
       margin: 20px 0 10px 0;
+    }
+    textarea.disabled {
+      color: var(--text-color);
+      background: var(--surface-d);
+      &:focus,
+      &:hover {
+        outline: none;
+        border-color: var(--surface-d);
+        box-shadow: 0;
+      }
     }
   }
 }
