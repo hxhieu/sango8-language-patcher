@@ -1,7 +1,7 @@
 {
   "name": "sango8-language-patcher",
   "description": "UnityEX compatible language patcher for the game Heroes of Three Kingdoms 8 on Steam",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "author": {
     "name": "Hugh Hoang",
     "email": "hugh.hoang@gmail.com",
