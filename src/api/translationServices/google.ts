@@ -13,4 +13,13 @@ const translate = async (text: string, to = 'en') => {
   return translations;
 };
 
-export { translate, maxRequestCharacters };
+const getAvailableLanguages = async () => {
+  const [languages] = await client.getLanguages();
+  const result: { [key: string]: string } = {};
+  languages.forEach(x => {
+    result[x.code] = x.name;
+  });
+  return result;
+};
+
+export { translate, maxRequestCharacters, getAvailableLanguages };

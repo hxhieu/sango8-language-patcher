@@ -5,6 +5,7 @@
       :sources="sourcePacks"
       :files="fileTypes"
       v-model:value="packListModel"
+      @newPack="showNewPackForm = true"
     />
     <RecordFilter
       v-if="packListModel.local"
@@ -20,6 +21,11 @@
       @translate="translate"
       @revert="revert"
       @writeAll="writeAll"
+    />
+    <NewPackForm
+      :show="showNewPackForm"
+      @hide="showNewPackForm = false"
+      :languages="supportLanguages"
     />
   </div>
 </template>
@@ -38,6 +44,7 @@ import { RootStore } from '@/store';
 import PackList from '@/components/PackList.vue';
 import RecordFilter from '@/components/RecordFilter.vue';
 import TranslationRecordList from '@/components/TranslationRecordList.vue';
+import NewPackForm from '@/components/NewPackForm.vue';
 
 import {
   FetchRecordArgs,
@@ -57,6 +64,7 @@ export default defineComponent({
     PackList,
     RecordFilter,
     TranslationRecordList,
+    NewPackForm,
   },
   setup() {
     const { ipcRenderer } = window._api;
@@ -97,6 +105,9 @@ export default defineComponent({
 
     const filterPageSizes = computed(() => home.filterPageSizes);
     const totalRecords = computed(() => translations.total);
+
+    const showNewPackForm = ref(false);
+    const supportLanguages = computed(() => home.supportLanguages);
 
     const save = (records: TranslationRecord[]) => {
       if (
@@ -186,6 +197,8 @@ export default defineComponent({
       debug,
       revert,
       writeAll,
+      showNewPackForm,
+      supportLanguages,
     };
   },
 });

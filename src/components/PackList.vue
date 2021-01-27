@@ -23,7 +23,7 @@
         <label v-else class="form-control"
           >You do not have a pack, create one first</label
         >
-        <Button class="form-control">New pack</Button>
+        <Button class="form-control" @click="newPack">New pack</Button>
       </div>
       <div class="form-section form-control">
         <label class="form-control">Source pack</label>
@@ -59,7 +59,7 @@ export default defineComponent({
       type: Object,
     },
   },
-  emits: ['update:value'],
+  emits: ['update:value', 'newPack'],
   setup(props, { emit }) {
     const sourcePacks = computed(() => props.sources || []);
     const localPacks = computed(() => props.locals || []);
@@ -75,12 +75,17 @@ export default defineComponent({
       emit('update:value', model.value);
     };
 
+    const newPack = () => {
+      emit('newPack');
+    };
+
     return {
       sourcePacks,
       localPacks,
       fileTypes,
       model,
       change,
+      newPack,
     };
   },
 });
