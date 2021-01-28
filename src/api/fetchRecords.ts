@@ -55,7 +55,7 @@ const fetchRecords = async (
   });
 
   // filter
-  for (var record of combined) {
+  for (const record of combined) {
     if (search) {
       // Search keyword
       switch (search) {

@@ -40,7 +40,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, ref } from 'vue';
+import { computed, defineComponent, ref, watch } from 'vue';
 import { PackListModel } from '@/interfaces';
 
 export default defineComponent({
@@ -64,11 +64,10 @@ export default defineComponent({
     const sourcePacks = computed(() => props.sources || []);
     const localPacks = computed(() => props.locals || []);
     const fileTypes = computed(() => props.files || []);
-    const { source, local, fileType } = (props.value || {}) as PackListModel;
     const model = ref<PackListModel>({
-      source: source || 'zh-tw',
-      local,
-      fileType: fileType || 'full',
+      source: 'zh-tw',
+      local: '',
+      fileType: '',
     });
 
     const change = () => {
@@ -78,6 +77,18 @@ export default defineComponent({
     const newPack = () => {
       emit('newPack');
     };
+
+    watch(
+      props,
+      () => {
+        const { source, local, fileType } = (props.value ||
+          {}) as PackListModel;
+        model.value.local = local;
+        model.value.source = source;
+        model.value.fileType = fileType;
+      },
+      { immediate: true },
+    );
 
     return {
       sourcePacks,

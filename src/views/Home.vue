@@ -26,6 +26,7 @@
       :show="showNewPackForm"
       @hide="showNewPackForm = false"
       :languages="supportLanguages"
+      @save="newPack"
     />
   </div>
 </template>
@@ -54,6 +55,7 @@ import {
 } from '@/interfaces';
 import {
   EVENT_FETCH_RECORDS,
+  EVENT_NEW_PACK,
   EVENT_TRANSLATE_RECORDS_BATCH,
 } from '@/api/const';
 import { IpcRendererEvent } from 'electron';
@@ -159,6 +161,16 @@ export default defineComponent({
       revertRecords(records, fetchArgs.value);
     };
 
+    const newPack = ({
+      name,
+      language,
+    }: {
+      name: string;
+      language: string;
+    }) => {
+      ipcRenderer.invoke(EVENT_NEW_PACK, `${language}.${name}`);
+    };
+
     checkAndFetchSources();
     fetchLocalPacks();
 
@@ -171,6 +183,12 @@ export default defineComponent({
 
     ipcRenderer.on(EVENT_FETCH_RECORDS, () => {
       unblock();
+    });
+
+    ipcRenderer.on(EVENT_NEW_PACK, (_: IpcRendererEvent, packName: string) => {
+      fetchLocalPacks();
+      packListModel.value.local = packName;
+      packListModel.value.fileType = packListModel.value.fileType || 'full';
     });
 
     // Refetch the records when filters changed
@@ -199,6 +217,7 @@ export default defineComponent({
       writeAll,
       showNewPackForm,
       supportLanguages,
+      newPack,
     };
   },
 });

@@ -1,8 +1,4 @@
-const compare = (
-  str?: string,
-  search?: string,
-  exact: boolean = false,
-): boolean => {
+const compare = (str?: string, search?: string, exact = false): boolean => {
   if (!str || !search) {
     return false;
   }

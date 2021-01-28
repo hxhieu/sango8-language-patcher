@@ -2,7 +2,6 @@ import { basename } from 'path';
 import { blockUi, unblockUi } from '@/api/blockUi';
 import { listPacks } from '@/api/localPackUtils';
 import { log } from '@/api/logger';
-import { SourceVariant } from '@/interfaces';
 import { dialog, MenuItemConstructorOptions } from 'electron';
 import { readSource } from '../debug/parseSources';
 import { readFileAsync } from '../nodeApi';
@@ -27,7 +26,7 @@ const extractPatch = async (dir: string) => {
       const sourceArchive = await readArchive(variant);
       if (sourceArchive && sourceArchive[fileType]) {
         const sources = sourceArchive[fileType];
-        for (var source of sources) {
+        for (const source of sources) {
           source.text = records[source.id];
         }
         // Just need to replicate the process

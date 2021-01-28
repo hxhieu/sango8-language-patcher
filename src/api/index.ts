@@ -11,6 +11,7 @@ import {
   EVENT_TRANSLATE_RECORDS,
   EVENT_CREATE_PATCHES,
   EVENT_REVERT_RECORDS,
+  EVENT_NEW_PACK,
 } from './const';
 import { checkCreateWorkDir } from './dirUtils';
 import { parseSources } from './debug/parseSources';
@@ -28,6 +29,7 @@ import { saveRecords } from './saveRecords';
 import { translateRecords } from './translateRecords';
 import { createPatches } from './createPatches';
 import { revertRecords } from './revertRecords';
+import { newPack } from './newPack';
 
 const handleInvocations = () => {
   // Debug events
@@ -163,6 +165,19 @@ const handleInvocations = () => {
         log(err.message, 'error');
       } finally {
         e.sender.send(EVENT_REVERT_RECORDS);
+      }
+    },
+  );
+
+  ipcMain.handle(
+    EVENT_NEW_PACK,
+    async (e: IpcMainInvokeEvent, packName: string) => {
+      try {
+        await newPack(packName);
+      } catch (err) {
+        log(err.message, 'error');
+      } finally {
+        e.sender.send(EVENT_NEW_PACK, packName);
       }
     },
   );

@@ -24,7 +24,7 @@ const revertRecords = async (
   }
 
   const calls: any = [];
-  let dir = join(packDir, local, fileType || 'full');
+  const dir = join(packDir, local, fileType || 'full');
   // Just delete the file...
   records.forEach(x => {
     const filePath = join(dir, `${x.id}.json`);

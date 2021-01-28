@@ -4,25 +4,18 @@
       <div class="form-section">
         <div class="form-section form-control">
           <label class="form-control">Name</label>
-          <InputText class="form-control" />
+          <InputText class="form-control" v-model="model.name" />
         </div>
         <div class="form-section form-control">
           <label class="form-control">Language</label>
-          <AutoComplete
+          <Dropdown
             class="form-control lang-list"
-            :suggestions="filteredLanguages"
-            scrollHeight="200px"
-            :dropdown="true"
-            field="value"
-            v-model="selectedValue"
-            @complete="searchLanguage($event)"
-          >
-            <template #item="slotProps">
-              <label
-                >{{ slotProps.data.value }} - {{ slotProps.data.text }}</label
-              >
-            </template>
-          </AutoComplete>
+            :options="supportLanguages"
+            scrollHeight="300px"
+            optionValue="value"
+            optionLabel="text"
+            v-model="model.language"
+          />
         </div>
       </div>
     </div>
@@ -33,7 +26,12 @@
         @click="visible = false"
         class="p-button-text"
       />
-      <Button label="Create" icon="pi pi-check" @click="onSave" />
+      <Button
+        label="Create"
+        icon="pi pi-check"
+        @click="onSave"
+        v-if="isValid"
+      />
     </template>
   </Dialog>
 </template>
@@ -42,13 +40,11 @@
 import { computed, defineComponent, ref, watch } from 'vue';
 
 import Dialog from 'primevue/dialog';
-import AutoComplete from 'primevue/autocomplete';
 
 export default defineComponent({
   name: 'NewPackForm',
   components: {
     Dialog,
-    AutoComplete,
   },
   props: {
     show: {
@@ -76,18 +72,18 @@ export default defineComponent({
       return result;
     });
 
-    const filteredLanguages = ref();
+    const model = ref({
+      name: '',
+      language: '',
+    });
 
-    const selectedValue = ref();
+    const isValid = computed(
+      () => model.value && model.value.name && model.value.language,
+    );
 
     const onSave = () => {
-      emit('save');
-    };
-
-    const searchLanguage = ({ query }: { query: string }) => {
-      filteredLanguages.value = supportLanguages.value.filter(
-        x => x.value === query,
-      );
+      emit('save', model.value);
+      visible.value = false;
     };
 
     watch(
@@ -101,9 +97,9 @@ export default defineComponent({
     return {
       visible,
       onSave,
-      filteredLanguages,
-      selectedValue,
-      searchLanguage,
+      model,
+      supportLanguages,
+      isValid,
     };
   },
 });
